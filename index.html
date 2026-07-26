@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUNA — English Tutor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000;
+  --s1:rgba(255,255,255,.04);
+  --s2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08);
+  --border2:rgba(255,255,255,.15);
+  --blue:#3B82F6;
+  --purple:#7C3AED;
+  --pink:#EC4899;
+  --cyan:#06B6D4;
+  --green:#10B981;
+  --red:#F43F5E;
+  --text:#F8FAFF;
+  --muted:rgba(200,220,255,.5);
+  --dim:rgba(140,160,220,.28);
+  --r:14px;--rl:22px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:#000;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden;position:relative}
+
+/* AURORA */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#000}
+.ab{position:absolute;border-radius:50%;filter:blur(130px);pointer-events:none}
+.ab1{width:900px;height:900px;background:radial-gradient(circle,rgba(59,130,246,.22),transparent 65%);top:-350px;left:-200px;animation:ab1 18s ease-in-out infinite}
+.ab2{width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,.2),transparent 65%);bottom:-250px;right:-150px;animation:ab2 24s ease-in-out infinite}
+.ab3{width:560px;height:560px;background:radial-gradient(circle,rgba(236,72,153,.16),transparent 65%);top:35%;right:15%;animation:ab3 20s ease-in-out infinite}
+.ab4{width:400px;height:400px;background:radial-gradient(circle,rgba(6,182,212,.1),transparent 65%);bottom:10%;left:15%;animation:ab4 26s ease-in-out infinite}
+@keyframes ab1{0%,100%{transform:translate(0,0)}33%{transform:translate(80px,-90px)}66%{transform:translate(-50px,70px)}}
+@keyframes ab2{0%,100%{transform:translate(0,0)}33%{transform:translate(-90px,70px)}66%{transform:translate(70px,-60px)}}
+@keyframes ab3{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,-80px)}}
+@keyframes ab4{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-50px)}}
+
+/* APP WRAPPER — iridescent border */
+.app-wrap{position:relative;z-index:1;border-radius:30px;padding:1.5px;background:conic-gradient(from 0deg,rgba(59,130,246,.6),rgba(124,58,237,.6),rgba(236,72,153,.6),rgba(6,182,212,.5),rgba(59,130,246,.6));animation:border-spin 8s linear infinite;width:100%;max-width:1040px}
+@keyframes border-spin{to{filter:hue-rotate(360deg)}}
+
+.app{display:flex;width:100%;height:88vh;max-height:780px;background:rgba(4,4,10,.92);backdrop-filter:blur(40px) saturate(1.8);-webkit-backdrop-filter:blur(40px) saturate(1.8);border-radius:28.5px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.07)}
+
+/* LEFT */
+.left{width:290px;min-width:290px;display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(10,5,25,.8) 0%,rgba(5,2,15,.9) 100%);border-right:1px solid var(--border);position:relative;overflow:hidden}
+.left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 60% at 50% 20%,rgba(124,58,237,.12),transparent 60%);pointer-events:none}
+
+/* Logo */
+.logo-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;flex-shrink:0;position:relative;z-index:1}
+.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:.06em;background:linear-gradient(135deg,#A78BFA,#60A5FA,#F472B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:7px}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));box-shadow:0 0 10px rgba(236,72,153,.6);animation:ldot 2.5s ease-in-out infinite}
+@keyframes ldot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.logo-right{display:flex;align-items:center;gap:6px}
+.prog-btn{background:none;border:none;cursor:pointer;font-size:15px;padding:5px 7px;border-radius:8px;color:var(--muted);transition:all .2s;line-height:1}
+.prog-btn:hover{background:var(--s2);color:var(--text)}
+.xp-pill{display:flex;align-items:center;gap:5px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:4px 11px;font-size:11px;font-weight:700;color:#A78BFA}
+
+/* XP track */
+.xp-track-wrap{padding:8px 18px 0;flex-shrink:0;position:relative;z-index:1}
+.xp-track{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));border-radius:2px;transition:width .5s cubic-bezier(.22,1,.36,1);width:0%}
+
+/* Avatar zone */
+.avatar-zone{position:relative;display:flex;align-items:center;justify-content:center;flex:1;min-height:130px;padding:10px}
+#pCanvas{position:absolute;inset:0;pointer-events:none}
+.avatar-wrap{position:relative;z-index:1;width:180px;height:180px;animation:afloat 4s ease-in-out infinite}
+@keyframes afloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.a-glow{position:absolute;inset:-35px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.22) 0%,rgba(59,130,246,.1) 40%,transparent 70%);animation:aglow 3.5s ease-in-out infinite}
+@keyframes aglow{0%,100%{opacity:.5;transform:scale(.93)}50%{opacity:1;transform:scale(1.06)}}
+.a-ring{position:absolute;inset:-18px;border-radius:50%;border:1.5px solid rgba(124,58,237,.3);animation:aring1 10s linear infinite}
+.a-ring::before{content:'';position:absolute;top:16px;left:-5px;width:9px;height:9px;border-radius:50%;background:var(--purple);box-shadow:0 0 14px var(--purple),0 0 28px rgba(124,58,237,.5)}
+.a-ring2{position:absolute;inset:-32px;border-radius:50%;border:1px solid rgba(236,72,153,.2);animation:aring1 16s linear infinite reverse}
+.a-ring2::before{content:'';position:absolute;bottom:18px;right:-4px;width:6px;height:6px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink)}
+@keyframes aring1{to{transform:rotate(360deg)}}
+.a-svg{position:relative;z-index:1;width:100%;height:100%;filter:drop-shadow(0 0 22px rgba(124,58,237,.45)) drop-shadow(0 0 8px rgba(59,130,246,.3))}
+.eye-g{animation:blink 4.5s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,88%,100%{transform:scaleY(1)}94%{transform:scaleY(.04)}}
+
+/* Bubble */
+.bubble-wrap{flex-shrink:0;padding:0 16px 10px;position:relative;z-index:1}
+.bubble{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px 14px;font-size:12.5px;color:var(--text);line-height:1.55;text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;transition:all .3s;position:relative;backdrop-filter:blur(8px)}
+.bubble::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);border:8px solid transparent;border-bottom-color:rgba(255,255,255,.12);border-top:none}
+.bubble::after{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-bottom-color:rgba(4,4,10,.92);border-top:none}
+
+/* Tabs */
+.tabs{flex-shrink:0;position:relative;display:flex;background:rgba(0,0,0,.4);padding:4px;margin:0 14px 8px;border-radius:13px;border:1px solid var(--border);z-index:1}
+.tab-pill{position:absolute;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(124,58,237,.2));border:1px solid rgba(124,58,237,.35);border-radius:9px;transition:all .28s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:0}
+.tab{flex:1;position:relative;z-index:1;padding:8px 4px;border:none;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;background:transparent;color:var(--dim);transition:color .2s;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ti{font-size:14px}
+.tab:hover{color:var(--muted)}
+.tab.on{color:#A78BFA}
+
+/* Levels */
+.lvl-zone{flex-shrink:0;padding:0 14px 8px;position:relative;z-index:1}
+.lvl-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+.lvl-btns{display:flex;gap:3px}
+.lvl-btn{flex:1;padding:7px 2px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:10px;font-weight:700;background:transparent;color:var(--muted);transition:all .2s;font-family:inherit;letter-spacing:.02em}
+.lvl-btn.on{border-color:var(--pink);background:rgba(236,72,153,.1);color:var(--pink)}
+
+/* RIGHT */
+.right{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;background:rgba(3,3,8,.85)}
+.panel{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;animation:pfade .3s ease-out}
+.panel.active{display:flex}
+@keyframes pfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Panel header */
+.ph{padding:16px 22px 14px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.ph-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text)}
+.ph-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.ph-badge{display:flex;align-items:center;gap:5px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.22);border-radius:100px;padding:4px 11px;font-size:11px;color:var(--green);font-weight:600;white-space:nowrap}
+.ph-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:ldot 2s ease-in-out infinite}
+
+/* CHAT */
+.msgs{flex:1;min-height:0;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.msg-row{display:flex;align-items:flex-end;gap:10px;animation:min .3s ease-out}
+.msg-row.user{flex-direction:row-reverse}
+@keyframes min{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.msg-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:white;flex-shrink:0}
+.msg-av.luna-av{background:linear-gradient(135deg,var(--purple),var(--pink));box-shadow:0 0 14px rgba(124,58,237,.4)}
+.msg-av.user-av{background:rgba(255,255,255,.1);color:var(--muted)}
+.msg{max-width:73%;padding:13px 17px;border-radius:20px;font-size:14px;line-height:1.6;word-wrap:break-word}
+.msg-row.luna .msg{background:linear-gradient(135deg,rgba(59,130,246,.1) 0%,rgba(124,58,237,.08) 50%,rgba(236,72,153,.06) 100%);border:1px solid rgba(124,58,237,.2);color:var(--text);border-bottom-left-radius:5px}
+.msg-row.user .msg{background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border-bottom-right-radius:5px;box-shadow:0 4px 20px rgba(59,130,246,.3)}
+.tr{font-size:11px;margin-top:6px;font-style:italic;color:rgba(167,139,250,.7)}
+.msg-row.user .tr{color:rgba(255,255,255,.55)}
+
+/* Typing */
+.typing-row .msg{padding:13px 17px;display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;background:var(--purple);border-radius:50%;animation:td 1.2s infinite;opacity:.5}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+
+/* Input */
+.inp-area{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:9px;flex-shrink:0;background:rgba(0,0,0,.5);align-items:center}
+.inp{flex:1;padding:13px 20px;border:1px solid var(--border2);border-radius:100px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.04);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.inp::placeholder{color:var(--dim)}
+.inp:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.12),0 0 20px rgba(124,58,237,.08)}
+.inp.listening{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(244,63,94,.12)!important}
+.icon-btn{width:46px;height:46px;border-radius:50%;border:1px solid var(--border2);background:var(--s1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-family:inherit}
+.icon-btn:hover{border-color:var(--purple);color:#A78BFA;background:rgba(124,58,237,.1)}
+.icon-btn.send-btn{background:linear-gradient(135deg,var(--blue),var(--purple));border:none;color:white;box-shadow:0 4px 16px rgba(59,130,246,.35)}
+.icon-btn.send-btn:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(124,58,237,.45)}
+.icon-btn.send-btn:active{transform:scale(.95)}
+.mic-active{border-color:var(--red)!important;color:var(--red)!important;background:rgba(244,63,94,.1)!important;animation:mpulse 1s ease-in-out infinite}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,.5)}50%{box-shadow:0 0 0 12px rgba(244,63,94,0)}}
+
+/* PANEL BODY */
+.panel-body{flex:1;min-height:0;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:9px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(124,58,237,.3);border-radius:2px}
+
+/* VOCAB */
+.vcat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.vcat-h{padding:12px 15px;background:rgba(124,58,237,.07);border-bottom:1px solid var(--border);font-weight:700;font-size:13px;color:#A78BFA}
+.vwords{padding:9px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vword{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;transition:border-color .2s}
+.vword:hover{border-color:rgba(124,58,237,.35)}
+.wen{font-weight:700;color:var(--text);font-size:13px;display:flex;align-items:center;gap:5px}
+.wit{font-size:11px;color:var(--muted)}
+.speak-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:0;line-height:1;opacity:.55;transition:opacity .2s,transform .15s}
+.speak-btn:hover{opacity:1;transform:scale(1.2)}
+
+/* PHRASES */
+.ph-item{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:5px;transition:all .2s}
+.ph-item:hover{border-color:rgba(124,58,237,.35);background:var(--s2)}
+.ph-en{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.ph-it{font-size:13px;color:var(--muted)}
+.ph-ctx{font-size:11px;color:var(--pink);font-style:italic;opacity:.8}
+
+/* QUIZ */
+.quiz-top{display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);flex-shrink:0;font-size:12px;color:var(--muted);background:rgba(0,0,0,.3)}
+.quiz-stars{color:#FBBF24;letter-spacing:2px;font-size:14px;min-width:80px;text-align:center}
+.ex-wrap{padding:18px;overflow-y:auto;flex:1;min-height:0}
+.exbox{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:24px}
+.ex-prog{height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.ex-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));border-radius:2px;transition:width .4s ease}
+.exq{font-size:16px;color:var(--text);margin-bottom:18px;font-weight:500;line-height:1.45}
+.qnum{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(124,58,237,.18);border-radius:50%;font-size:12px;font-weight:700;color:#A78BFA;margin-right:8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{padding:13px 16px;border:1px solid var(--border2);border-radius:11px;cursor:pointer;font-size:14px;font-family:inherit;transition:all .2s;background:rgba(0,0,0,.25);color:var(--text);text-align:left}
+.opt:hover:not([disabled]){border-color:var(--purple);background:rgba(124,58,237,.1);transform:translateX(4px)}
+.opt.ok{border-color:var(--green)!important;background:rgba(16,185,129,.1)!important;color:var(--green)!important}
+.opt.no{border-color:var(--red)!important;background:rgba(244,63,94,.08)!important;color:#FF8FA8!important}
+.next-btn{margin-top:16px;padding:11px 26px;background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border:none;border-radius:100px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;display:none;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 14px rgba(59,130,246,.28)}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(124,58,237,.38)}
+.done-box{text-align:center;padding:44px 20px}
+.done-emoji{font-size:60px;display:block;margin-bottom:12px}
+.done-box h3{font-family:'Syne',sans-serif;font-size:28px;margin-bottom:8px;color:var(--text)}
+.done-box p{font-size:14px;color:var(--muted);margin-bottom:24px}
+.done-score{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin:6px 0 18px}
+.restart{padding:13px 30px;background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border:none;border-radius:100px;cursor:pointer;font-size:15px;font-family:inherit;font-weight:600;transition:transform .2s;box-shadow:0 4px 18px rgba(59,130,246,.3)}
+.restart:hover{transform:scale(1.05)}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}50%{box-shadow:0 0 0 18px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.flash{animation:flash .6s ease-out}
+
+/* PROGRESS PANEL */
+.prog-panel{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.prof-card{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(124,58,237,.1),rgba(236,72,153,.08));border:1px solid rgba(124,58,237,.25);border-radius:var(--rl);padding:20px;display:flex;align-items:center;gap:14px;position:relative}
+.prof-av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:white;flex-shrink:0;box-shadow:0 0 20px rgba(124,58,237,.4)}
+.prof-info{flex:1;min-width:0}
+.prof-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.prof-job{font-size:12px;color:var(--muted);margin-top:3px}
+.streak-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.3);border-radius:100px;padding:3px 9px;font-size:11px;font-weight:700;color:#FB923C}
+.prof-edit{position:absolute;top:12px;right:12px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--dim);padding:4px;border-radius:6px;transition:color .2s}
+.prof-edit:hover{color:var(--text)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.stat-n{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-l{font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.wb-header{display:flex;align-items:center;justify-content:space-between}
+.wb-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
+.wb-clear{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-family:inherit;transition:all .2s}
+.wb-clear:hover{border-color:var(--red);color:var(--red)}
+.wb-empty{text-align:center;padding:28px 16px;color:var(--dim);font-size:13px;line-height:1.65}
+.wb-list{display:flex;flex-direction:column;gap:6px}
+.wb-item{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:border-color .2s}
+.wb-item:hover{border-color:rgba(124,58,237,.35)}
+.wb-en{font-weight:700;color:var(--text);font-size:13px}
+.wb-it{font-size:11px;color:var(--muted);margin-top:2px}
+.wb-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.wb-ctx{font-size:10px;color:#A78BFA;font-weight:600;background:rgba(124,58,237,.1);border-radius:5px;padding:2px 7px}
+.wb-date{font-size:10px;color:var(--dim)}
+.wb-say{background:none;border:none;cursor:pointer;font-size:13px;opacity:.55;transition:opacity .2s;padding:0}
+.wb-say:hover{opacity:1}
+.onboard-box{background:var(--s1);border:1px solid rgba(124,58,237,.25);border-radius:var(--rl);padding:22px}
+.onboard-box p{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.65}
+.onboard-inp{width:100%;padding:11px 16px;border:1px solid var(--border2);border-radius:100px;font-size:14px;font-family:inherit;background:rgba(0,0,0,.4);color:var(--text);outline:none;margin-bottom:8px;transition:border-color .2s;display:block}
+.onboard-inp:focus{border-color:var(--purple)}
+.onboard-btn{padding:10px 24px;background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border:none;border-radius:100px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:transform .2s;box-shadow:0 4px 14px rgba(59,130,246,.25)}
+.onboard-btn:hover{transform:scale(1.04)}
+
+/* XP POP */
+.xp-pop{position:fixed;font-size:13px;font-weight:700;color:var(--green);pointer-events:none;animation:xpfly 1.2s ease-out forwards;z-index:1000;text-shadow:0 0 10px var(--green)}
+@keyframes xpfly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-55px) scale(.8)}}
+
+/* VOICE WAVES */
+.voice-waves{position:absolute;inset:0;pointer-events:none;z-index:0}
+.vwave{position:absolute;border-radius:50%;opacity:0;top:50%;left:50%;transform:translate(-50%,-50%)}
+.vwave1{width:190px;height:190px;border:1.5px solid rgba(124,58,237,.65)}
+.vwave2{width:215px;height:215px;border:1px solid rgba(59,130,246,.4)}
+.vwave3{width:243px;height:243px;border:1px solid rgba(236,72,153,.28)}
+.is-speaking .vwave1{opacity:1;animation:vwp .6s ease-in-out infinite}
+.is-speaking .vwave2{opacity:1;animation:vwp .6s ease-in-out infinite .13s}
+.is-speaking .vwave3{opacity:1;animation:vwp .6s ease-in-out infinite .26s}
+@keyframes vwp{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.07);opacity:1}}
+.is-speaking .a-glow{animation:aglow .4s ease-in-out infinite!important}
+.is-speaking .a-svg{filter:drop-shadow(0 0 30px rgba(124,58,237,.75)) drop-shadow(0 0 14px rgba(236,72,153,.45))!important}
+
+/* VOICE BAR */
+.vbar{display:flex;align-items:center;gap:4px;padding:6px 14px 10px;flex-shrink:0;position:relative;z-index:1;border-top:1px solid var(--border)}
+.vbar-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-right:2px;white-space:nowrap}
+.vpill{flex:1;padding:5px 2px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:9px;font-weight:700;background:transparent;color:var(--dim);transition:all .2s;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3}
+.vpill .vi{font-size:13px}
+.vpill.on{border-color:var(--purple);background:rgba(124,58,237,.13);color:#A78BFA}
+.vacc{padding:5px 8px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;background:transparent;color:var(--dim);transition:all .2s;font-family:inherit}
+.vacc.gb{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.08);color:var(--blue)}
+
+/* VOCAB ENHANCED — single-row horizontal cards */
+.vcat2{border-radius:var(--r);overflow:hidden;margin-bottom:10px;border:1px solid rgba(124,58,237,.18)}
+.vcat-h2{padding:12px 16px;font-weight:700;font-size:13px;color:#A78BFA;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(59,130,246,.07));border-bottom:1px solid rgba(124,58,237,.15)}
+.vcat-h2 .cat-count{margin-left:auto;font-size:10px;font-weight:600;color:var(--dim);background:rgba(255,255,255,.06);border-radius:100px;padding:2px 9px}
+.vwords2{display:flex;flex-direction:column;gap:0}
+.vword2{background:rgba(3,3,8,.9);padding:11px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .18s;cursor:pointer}
+.vword2:last-child{border-bottom:none}
+.vword2:hover{background:rgba(124,58,237,.1)}
+.vword2:hover .vw-spk{opacity:1}
+.vw-icon{font-size:26px;width:36px;text-align:center;flex-shrink:0;line-height:1}
+.vw-info{flex:1;min-width:0}
+.vw-en{font-weight:800;color:var(--text);font-size:15px;line-height:1.2}
+.vw-phon{font-size:10px;color:rgba(147,197,253,.6);font-style:italic;letter-spacing:.02em;margin-top:2px}
+.vw-it{font-size:12px;color:var(--muted);margin-top:2px}
+.vw-spk{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:14px;opacity:.5;transition:opacity .2s,transform .15s,background .2s;line-height:1;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.vw-spk:hover{opacity:1;transform:scale(1.15);background:rgba(124,58,237,.25)}
+
+/* GRAMMAR SECTION */
+.grammar-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:2px}
+.grammar-h{padding:13px 16px;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(6,182,212,.06));border-bottom:1px solid rgba(16,185,129,.15);font-weight:700;font-size:13px;color:#34D399;display:flex;align-items:center;gap:7px}
+.grammar-body{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.grammar-row{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;font-size:12.5px;line-height:1.55}
+.grammar-row .gr-label{min-width:80px;font-weight:700;color:#34D399;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.grammar-row .gr-ex{color:var(--muted);flex:1}
+.grammar-row .gr-it{color:var(--dim);font-size:11px;font-style:italic}
+
+/* PHRASAL VERBS */
+.pv-item{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;display:flex;flex-direction:column;gap:5px;transition:all .2s}
+.pv-item:hover{border-color:rgba(6,182,212,.35);background:rgba(6,182,212,.04)}
+.pv-verb{font-weight:800;font-size:15px;color:var(--cyan);display:flex;align-items:center;gap:8px}
+.pv-it{font-size:12px;color:var(--muted)}
+.pv-ex{font-size:11.5px;color:var(--dim);font-style:italic;border-left:2px solid rgba(6,182,212,.25);padding-left:9px;margin-top:2px}
+
+/* ECHO / PRONUNCIATION */
+.echo-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.25);border-radius:100px;font-size:11px;font-weight:700;color:var(--pink);cursor:pointer;font-family:inherit;transition:all .2s;margin-top:7px}
+.echo-btn:hover:not(:disabled){background:rgba(236,72,153,.18);border-color:rgba(236,72,153,.5)}
+.echo-btn:disabled{opacity:.5;cursor:wait}
+.echo-result{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;margin-top:5px;display:inline-block}
+.echo-result.good{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--green)}
+.echo-result.ok{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:#FB923C}
+.echo-result.try{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:var(--red)}
+
+/* AUTO SPEAK TOGGLE */
+.aspk{padding:4px 11px;border:1px solid var(--border);border-radius:100px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}
+.aspk.on{border-color:var(--pink);background:rgba(236,72,153,.08);color:var(--pink)}
+
+/* ── WELCOME SCREEN ── */
+.welcome-screen{position:fixed;inset:0;z-index:200;background:#000;overflow-y:auto;overflow-x:hidden;transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.welcome-screen.out{opacity:0;transform:scale(.97);pointer-events:none}
+.wc{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:24px 20px 40px}
+
+/* ─ Header ─ */
+.wc-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.wc-av{width:72px;height:72px;flex-shrink:0;position:relative}
+.wc-av-glow{position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.35),transparent 65%);animation:aglow 3.5s ease-in-out infinite}
+.wc-av svg{width:100%;height:100%;filter:drop-shadow(0 0 14px rgba(124,58,237,.55))}
+.wc-header-text{}
+.wc-greeting{font-size:13px;color:var(--dim);margin-bottom:3px;font-weight:500}
+.wc-logo{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;background:linear-gradient(135deg,#A78BFA,#60A5FA,#F472B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.04em;line-height:1}
+.wc-sub{font-size:12px;color:var(--dim);margin-top:3px;line-height:1.4}
+
+/* ─ Stats row ─ */
+.wc-stats{display:flex;gap:8px;margin-bottom:22px}
+.wcs-pill{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center}
+.wcs-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.wcs-l{font-size:9px;color:var(--dim);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+
+/* ─ Section label ─ */
+.wc-sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.wc-sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─ Word of the Day ─ */
+.wc-wotd{background:linear-gradient(135deg,rgba(124,58,237,.07),rgba(96,165,250,.04));border:1px solid rgba(124,58,237,.22);border-radius:20px;padding:18px 20px;margin-bottom:22px;cursor:pointer;transition:border-color .2s,transform .2s}
+.wc-wotd:hover{border-color:rgba(124,58,237,.45);transform:translateY(-1px)}
+.wotd-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.wotd-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);display:flex;align-items:center;gap:5px}
+.wotd-listen{background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:5px 13px;font-size:11px;cursor:pointer;color:var(--purple);font-family:inherit;font-weight:600;transition:all .2s;white-space:nowrap}
+.wotd-listen:hover{background:rgba(124,58,237,.28)}
+.wotd-word{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text);line-height:1}
+.wotd-phon{font-size:12px;color:rgba(147,197,253,.6);font-style:italic;margin-top:4px}
+.wotd-it{font-size:13px;color:var(--muted);margin-top:6px}
+.wotd-ex{font-size:12px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-style:italic;line-height:1.5}
+
+/* ─ Quick launch grid ─ */
+.wc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.wc-card{border-radius:20px;padding:18px 16px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.025);transition:transform .18s,border-color .18s,background .18s;display:flex;flex-direction:column;gap:6px;text-align:left;position:relative;overflow:hidden}
+.wc-card:hover{transform:translateY(-3px)}
+.wc-card:active{transform:scale(.97)}
+.wc-card-ic{font-size:26px;line-height:1;margin-bottom:2px}
+.wc-card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--text)}
+.wc-card-desc{font-size:11px;color:var(--dim);line-height:1.35}
+.wc-card-arrow{position:absolute;top:14px;right:14px;font-size:12px;color:var(--dim);opacity:.5}
+.wc-card.cc{border-color:rgba(96,165,250,.25);background:rgba(96,165,250,.05)}
+.wc-card.cc:hover{border-color:rgba(96,165,250,.55);background:rgba(96,165,250,.1)}
+.wc-card.cv{border-color:rgba(167,139,250,.25);background:rgba(167,139,250,.05)}
+.wc-card.cv:hover{border-color:rgba(167,139,250,.55);background:rgba(167,139,250,.1)}
+.wc-card.cp{border-color:rgba(244,114,182,.25);background:rgba(244,114,182,.05)}
+.wc-card.cp:hover{border-color:rgba(244,114,182,.55);background:rgba(244,114,182,.1)}
+.wc-card.cq{border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.05)}
+.wc-card.cq:hover{border-color:rgba(52,211,153,.55);background:rgba(52,211,153,.1)}
+
+/* ─ Name input + enter ─ */
+.wc-name-row{display:flex;gap:8px;margin-bottom:14px}
+.wc-name-inp{flex:1;padding:13px 18px;border:1px solid var(--border2);border-radius:100px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.04);color:var(--text);outline:none;transition:border-color .2s}
+.wc-name-inp:focus{border-color:var(--purple)}
+.wc-btn{width:100%;padding:16px 30px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));color:white;border:none;border-radius:100px;cursor:pointer;font-size:15px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.04em;transition:transform .2s,box-shadow .2s;box-shadow:0 8px 32px rgba(124,58,237,.4)}
+.wc-btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 14px 44px rgba(124,58,237,.55)}
+.wc-btn:active{transform:scale(.98)}
+.wc-tip{margin-top:12px;font-size:11px;color:var(--dim);text-align:center}
+
+/* ─ Recent words (returning user) ─ */
+.wc-recent{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.wc-recent-tag{padding:6px 12px;border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.02);cursor:pointer;transition:all .2s}
+.wc-recent-tag:hover{border-color:var(--purple);color:var(--text)}
+/* ── ROLEPLAY ── */
+.rp-intro{background:linear-gradient(135deg,rgba(236,72,153,.08),rgba(124,58,237,.05));border:1px solid rgba(236,72,153,.2);border-radius:18px;padding:16px 18px;margin-bottom:6px}
+.rp-intro-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text);margin-bottom:5px}
+.rp-intro-d{font-size:12.5px;color:var(--muted);line-height:1.5}
+.rp-fields{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.rp-field{padding:7px 12px;border:1px solid var(--border);border-radius:100px;background:rgba(255,255,255,.02);color:var(--muted);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.rp-field:hover{border-color:var(--purple);color:var(--text)}
+.rp-field.on{border-color:var(--pink);background:rgba(236,72,153,.12);color:var(--pink)}
+.rp-card{border:1px solid var(--border);border-radius:18px;padding:16px 18px;background:rgba(255,255,255,.025);cursor:pointer;transition:transform .18s,border-color .18s;margin-bottom:2px}
+.rp-card:hover{transform:translateY(-2px);border-color:rgba(236,72,153,.45)}
+.rp-card-t{font-family:'Syne',sans-serif;font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:5px}
+.rp-card-s{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.rp-card-r{font-size:11px;color:var(--dim);padding-top:8px;border-top:1px solid var(--border)}
+.rp-go{margin-top:10px;padding:8px 16px;border:none;border-radius:100px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-size:12px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer}
+.rp-goal{margin-top:6px;padding:11px 15px;border-radius:14px;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);font-size:12px;color:var(--muted)}
+/* SUB-TABS (vocab sections) */
+.stabs{display:flex;gap:5px;padding:12px 16px 0;flex-shrink:0;border-bottom:1px solid var(--border)}
+.stab{padding:7px 14px;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:12px;font-weight:600;background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}
+.stab:hover{color:var(--muted)}
+.stab.on{color:#A78BFA;border-bottom-color:var(--purple)}
+.stab-panel{display:none;flex:1;min-height:0;overflow-y:auto;padding:14px 16px;flex-direction:column;gap:8px}
+.stab-panel.active{display:flex}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  body{padding:0}
+  .app-wrap,.app{border-radius:0;height:100vh;max-height:100vh}
+  .left{width:100%;min-width:0;flex-direction:row;flex-wrap:wrap;padding:10px 12px;max-height:165px;overflow:hidden;border-right:none;border-bottom:1px solid var(--border)}
+  .avatar-zone{width:62px;height:62px;flex:none;padding:0}
+  .a-ring,.a-ring2,.a-glow{display:none}
+  #pCanvas{display:none}
+  .bubble-wrap{flex:1;padding:0;margin-left:8px}
+  .bubble::before,.bubble::after{display:none}
+  .logo-bar{width:100%}
+  .tabs{margin:0;width:100%}
+  .lvl-zone{width:100%;padding:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .avatar-wrap,.a-ring,.a-ring2,.a-glow,.logo-dot,.ph-dot,.aurora .ab,.app-wrap{animation:none}
+  .msg-row,.opt,.panel{animation:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora"><div class="ab ab1"></div><div class="ab ab2"></div><div class="ab ab3"></div><div class="ab ab4"></div></div>
+
+<!-- WELCOME SCREEN -->
+<div class="welcome-screen" id="welcomeScreen">
+  <div class="wc" id="wc"></div>
+</div>
+
+<div class="app-wrap">
+<div class="app">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="logo-bar">
+      <div class="logo"><div class="logo-dot"></div>LUNA ✦</div>
+      <div class="logo-right">
+        <button class="prog-btn" onclick="switchTab('progress',this)" title="Progressi">📈</button>
+        <div class="xp-pill">⭐ <span id="xpTxt">0 XP</span></div>
+      </div>
+    </div>
+    <div class="xp-track-wrap"><div class="xp-track"><div class="xp-fill" id="xpFill"></div></div></div>
+
+    <div class="avatar-zone">
+      <canvas id="pCanvas"></canvas>
+      <div class="voice-waves" id="vwaves"><div class="vwave vwave1"></div><div class="vwave vwave2"></div><div class="vwave vwave3"></div></div>
+      <div class="avatar-wrap" id="aWrap">
+        <div class="a-glow"></div>
+        <div class="a-ring"></div>
+        <div class="a-ring2"></div>
+        <svg class="a-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="fg" cx="36%" cy="30%">
+              <stop offset="0%" stop-color="#E0F0FF"/>
+              <stop offset="55%" stop-color="#B8D4FF"/>
+              <stop offset="100%" stop-color="#80B0E8"/>
+            </radialGradient>
+            <radialGradient id="bg2" cx="50%" cy="50%">
+              <stop offset="0%" stop-color="rgba(124,58,237,0.4)"/>
+              <stop offset="60%" stop-color="rgba(59,130,246,0.15)"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+          </defs>
+          <circle cx="80" cy="80" r="74" fill="url(#bg2)"/>
+          <circle cx="80" cy="80" r="62" fill="url(#fg)"/>
+          <path d="M15 77 Q21 22 80 19 Q139 22 145 77 Q135 44 80 41 Q25 44 15 77Z" fill="#0F1830"/>
+          <path d="M15 77 Q11 56 18 40" stroke="#0F1830" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <path d="M145 77 Q149 56 142 40" stroke="#0F1830" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <circle cx="108" cy="35" r="2.5" fill="#A78BFA" opacity=".9"/>
+          <circle cx="92" cy="27" r="1.6" fill="#F472B6" opacity=".8"/>
+          <circle cx="54" cy="31" r="2" fill="#60A5FA" opacity=".7"/>
+          <ellipse cx="80" cy="93" rx="48" ry="54" fill="url(#fg)"/>
+          <ellipse cx="30" cy="91" rx="9" ry="11" fill="#BEDAFF"/>
+          <ellipse cx="130" cy="91" rx="9" ry="11" fill="#BEDAFF"/>
+          <path d="M50 70 Q63 64 72 68" stroke="#0F1830" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <path d="M88 68 Q97 64 110 70" stroke="#0F1830" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <!-- Left eye -->
+          <g class="eye-g">
+            <ellipse cx="62" cy="83" rx="12.5" ry="13" fill="white"/>
+            <ellipse cx="62" cy="84" rx="8.5" ry="9" fill="#1C2F5A"/>
+            <circle id="pupilL" cx="62" cy="83" r="4.8" fill="#040A1A"/>
+            <circle id="shineL" cx="65.5" cy="79.5" r="2.2" fill="white"/>
+          </g>
+          <!-- Right eye -->
+          <g class="eye-g">
+            <ellipse cx="98" cy="83" rx="12.5" ry="13" fill="white"/>
+            <ellipse cx="98" cy="84" rx="8.5" ry="9" fill="#1C2F5A"/>
+            <circle id="pupilR" cx="98" cy="83" r="4.8" fill="#040A1A"/>
+            <circle id="shineR" cx="101.5" cy="79.5" r="2.2" fill="white"/>
+          </g>
+          <ellipse cx="80" cy="101" rx="4.5" ry="3.5" fill="#9ABCDE"/>
+          <path d="M76 101 Q80 106 84 101" stroke="#80A8CC" stroke-width="1.5" fill="none"/>
+          <path id="mouth" d="M63 116 Q80 129 97 116" stroke="#4080B8" stroke-width="2.8" fill="#A8CCEC" stroke-linecap="round"/>
+          <ellipse cx="45" cy="108" rx="13" ry="8" fill="#60A0D8" opacity=".2"/>
+          <ellipse cx="115" cy="108" rx="13" ry="8" fill="#60A0D8" opacity=".2"/>
+          <path d="M73 53 Q80 48 87 53 Q81 43 73 53Z" fill="#A78BFA" opacity=".65"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble" id="bubble">Ciao! Sono <strong>Luna</strong> ✦<br>Impariamo l'inglese insieme! 🇬🇧</div>
+    </div>
+
+    <div class="tabs" id="tabBar">
+      <div class="tab-pill" id="tabPill"></div>
+      <button class="tab on" id="t-chat" onclick="switchTab('chat',this)"><span class="ti">💬</span>Chat</button>
+      <button class="tab" id="t-vocab" onclick="switchTab('vocab',this)"><span class="ti">📚</span>Vocaboli</button>
+      <button class="tab" id="t-roleplay" onclick="switchTab('roleplay',this)"><span class="ti">🎬</span>Roleplay</button>
+      <button class="tab" id="t-phrases" onclick="switchTab('phrases',this)"><span class="ti">🗣️</span>Frasi</button>
+      <button class="tab" id="t-exercises" onclick="switchTab('exercises',this)"><span class="ti">✏️</span>Quiz</button>
+    </div>
+
+    <div class="lvl-zone">
+      <div class="lvl-label">Livello</div>
+      <div class="lvl-btns" id="lvlBtns">
+        <button class="lvl-btn" data-lv="a1" onclick="setLevel('a1',this)">A1</button>
+        <button class="lvl-btn" data-lv="a2" onclick="setLevel('a2',this)">A2</button>
+        <button class="lvl-btn" data-lv="b1" onclick="setLevel('b1',this)">B1</button>
+        <button class="lvl-btn" data-lv="b2" onclick="setLevel('b2',this)">B2</button>
+        <button class="lvl-btn" data-lv="c1" onclick="setLevel('c1',this)">C1</button>
+        <button class="lvl-btn" data-lv="c2" onclick="setLevel('c2',this)">C2</button>
+      </div>
+    </div>
+
+    <div class="vbar">
+      <span class="vbar-lbl">Voce</span>
+      <button class="vpill on" id="vp-teacher" onclick="setPersonality('teacher',this)"><span class="vi">👩‍🏫</span>Teacher</button>
+      <button class="vpill" id="vp-friend" onclick="setPersonality('friend',this)"><span class="vi">😊</span>Friend</button>
+      <button class="vpill" id="vp-energy" onclick="setPersonality('energy',this)"><span class="vi">⚡</span>Speed</button>
+      <button class="vacc gb" id="vacc-btn" onclick="toggleAccent()" title="Cambia accento">🇬🇧</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="panel active" id="p-chat">
+      <div class="ph">
+        <div><div class="ph-title">Conversazione</div><div class="ph-sub">Scrivi in italiano o inglese 🇮🇹→🇬🇧</div></div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <button class="aspk on" id="autoSpkBtn" onclick="toggleAutoSpeak()" title="Luna parla automaticamente">🔊 Auto</button>
+          <div class="ph-badge"><div class="ph-dot"></div>Luna online</div>
+        </div>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="inp-area">
+        <input class="inp" id="inp" placeholder="Scrivi o parla in inglese…" onkeydown="if(event.key==='Enter')send()"/>
+        <button class="icon-btn" id="micBtn" onclick="toggleMic()" title="Microfono 🎤">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <button class="icon-btn send-btn" onclick="send()" aria-label="Invia">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel" id="p-vocab">
+      <div class="ph"><div><div class="ph-title">Vocabolario</div><div class="ph-sub">Clicca 🔊 per sentire la pronuncia</div></div></div>
+      <div class="stabs" id="vocabStabs">
+        <button class="stab on" onclick="switchVocabTab('words',this)">📚 Parole</button>
+        <button class="stab" onclick="switchVocabTab('grammar',this)">📖 Grammatica</button>
+        <button class="stab" onclick="switchVocabTab('phrasal',this)">🔗 Phrasal Verbs</button>
+      </div>
+      <div class="stab-panel active" id="vc"></div>
+      <div class="stab-panel" id="vgrammar"></div>
+      <div class="stab-panel" id="vphrasa"></div>
+    </div>
+
+    <div class="panel" id="p-roleplay">
+      <div class="ph"><div><div class="ph-title">Roleplay Immersivo</div><div class="ph-sub">Scenari reali del tuo settore 🎭</div></div></div>
+      <div class="panel-body" id="rpc"></div>
+    </div>
+
+    <div class="panel" id="p-phrases">
+      <div class="ph"><div><div class="ph-title">Frasi Utili</div><div class="ph-sub">Clicca 🔊 per ascoltare!</div></div></div>
+      <div class="panel-body" id="pc"></div>
+    </div>
+
+    <div class="panel" id="p-exercises">
+      <div class="quiz-top">
+        <span>Domanda <strong id="qN">1</strong>/<strong id="qT">12</strong></span>
+        <div class="quiz-stars" id="qStars"></div>
+        <span>Score: <strong id="qScore">0</strong></span>
+      </div>
+      <div class="ex-wrap" id="exc"></div>
+    </div>
+
+    <div class="panel" id="p-progress">
+      <div class="ph"><div><div class="ph-title">I Tuoi Progressi</div><div class="ph-sub">Profilo · Stats · Vocabolario</div></div></div>
+      <div class="prog-panel" id="progContent"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// PARTICLES
+(function(){
+  const canvas=document.getElementById('pCanvas'),zone=document.querySelector('.avatar-zone');
+  if(!canvas||!zone)return;
+  function resize(){canvas.width=zone.offsetWidth;canvas.height=zone.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  const ctx=canvas.getContext('2d'),ps=[];
+  for(let i=0;i<32;i++){
+    const col=i%3===0?[59,130,246]:i%3===1?[124,58,237]:[236,72,153];
+    ps.push({a:Math.random()*Math.PI*2,r:76+Math.random()*40,sp:(.005+Math.random()*.009)*(Math.random()<.5?1:-1),sz:Math.random()*2+.4,al:Math.random()*.5+.15,tw:Math.random()*Math.PI*2,tws:.04+Math.random()*.04,col});
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const cx=canvas.width/2,cy=canvas.height/2;
+    ps.forEach(p=>{p.a+=p.sp;p.tw+=p.tws;
+      const x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r*.42,a=p.al*(0.35+0.65*Math.abs(Math.sin(p.tw)));
+      ctx.beginPath();ctx.arc(x,y,p.sz,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.col[0]},${p.col[1]},${p.col[2]},${a})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// EYE TRACKING
+(function(){
+  const BL={cx:62,cy:83},BR={cx:98,cy:83},MAX=3.5;
+  let curX=null,curY=null;
+  document.addEventListener('mousemove',e=>{curX=e.clientX;curY=e.clientY;});
+  function track(){
+    const pl=document.getElementById('pupilL'),pr=document.getElementById('pupilR'),sl=document.getElementById('shineL'),sr=document.getElementById('shineR');
+    const svg=document.querySelector('.a-svg');
+    if(!pl||!pr||!svg){requestAnimationFrame(track);return;}
+    if(curX!==null){
+      const rect=svg.getBoundingClientRect();
+      const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+      const dx=curX-cx,dy=curY-cy,dist=Math.sqrt(dx*dx+dy*dy)||1;
+      const ratio=Math.min(dist,220)/220;
+      const mx=(dx/dist)*MAX*ratio,my=(dy/dist)*MAX*ratio;
+      pl.setAttribute('cx',(BL.cx+mx).toFixed(1));pl.setAttribute('cy',(BL.cy+my).toFixed(1));
+      pr.setAttribute('cx',(BR.cx+mx).toFixed(1));pr.setAttribute('cy',(BR.cy+my).toFixed(1));
+      sl.setAttribute('cx',(65.5+mx*.6).toFixed(1));sl.setAttribute('cy',(79.5+my*.6).toFixed(1));
+      sr.setAttribute('cx',(101.5+mx*.6).toFixed(1));sr.setAttribute('cy',(79.5+my*.6).toFixed(1));
+    }
+    requestAnimationFrame(track);
+  }
+  track();
+  document.addEventListener('mouseleave',()=>{
+    ['pupilL','pupilR'].forEach((id,i)=>{const el=document.getElementById(id);if(el){el.setAttribute('cx',i===0?BL.cx:BR.cx);el.setAttribute('cy',i===0?BL.cy:BR.cy);}});
+  });
+})();
+
+// TAB PILL
+function movePill(btn){
+  const pill=document.getElementById('tabPill'),bar=document.getElementById('tabBar');
+  if(!pill||!bar||!btn)return;
+  const br=btn.getBoundingClientRect(),tr=bar.getBoundingClientRect();
+  pill.style.cssText=`left:${br.left-tr.left}px;top:${br.top-tr.top}px;width:${br.width}px;height:${br.height}px`;
+}
+setTimeout(()=>movePill(document.getElementById('t-chat')),60);
+
+// DATA
+const VOCAB={
+  a1:[
+    {cat:"🏠 Casa / Home",words:[{en:"house",it:"casa"},{en:"room",it:"stanza"},{en:"kitchen",it:"cucina"},{en:"bedroom",it:"camera da letto"},{en:"bathroom",it:"bagno"},{en:"door",it:"porta"},{en:"window",it:"finestra"},{en:"garden",it:"giardino"}]},
+    {cat:"🍎 Cibo / Food",words:[{en:"apple",it:"mela"},{en:"bread",it:"pane"},{en:"water",it:"acqua"},{en:"milk",it:"latte"},{en:"coffee",it:"caffè"},{en:"meat",it:"carne"},{en:"fish",it:"pesce"},{en:"pizza",it:"pizza"}]},
+    {cat:"🎨 Colori / Colors",words:[{en:"red",it:"rosso"},{en:"blue",it:"blu"},{en:"green",it:"verde"},{en:"yellow",it:"giallo"},{en:"black",it:"nero"},{en:"white",it:"bianco"},{en:"orange",it:"arancione"},{en:"purple",it:"viola"}]},
+    {cat:"📅 Giorni / Days",words:[{en:"Monday",it:"Lunedì"},{en:"Tuesday",it:"Martedì"},{en:"Wednesday",it:"Mercoledì"},{en:"Thursday",it:"Giovedì"},{en:"Friday",it:"Venerdì"},{en:"Saturday",it:"Sabato"},{en:"Sunday",it:"Domenica"},{en:"today",it:"oggi"}]},
+    {cat:"👨‍👩‍👧 Famiglia",words:[{en:"mother",it:"madre"},{en:"father",it:"padre"},{en:"sister",it:"sorella"},{en:"brother",it:"fratello"},{en:"grandmother",it:"nonna"},{en:"grandfather",it:"nonno"},{en:"friend",it:"amico/a"},{en:"child",it:"bambino/a"}]},
+    {cat:"🔢 Numeri",words:[{en:"one",it:"uno"},{en:"two",it:"due"},{en:"three",it:"tre"},{en:"four",it:"quattro"},{en:"five",it:"cinque"},{en:"ten",it:"dieci"},{en:"twenty",it:"venti"},{en:"hundred",it:"cento"}]}
+  ],
+  a2:[
+    {cat:"☀️ Tempo / Weather",words:[{en:"sunny",it:"soleggiato"},{en:"cloudy",it:"nuvoloso"},{en:"rain",it:"pioggia"},{en:"snow",it:"neve"},{en:"wind",it:"vento"},{en:"storm",it:"tempesta"},{en:"warm",it:"caldo (piacevole)"},{en:"freezing",it:"gelido"}]},
+    {cat:"👕 Vestiti / Clothes",words:[{en:"shirt",it:"camicia"},{en:"trousers",it:"pantaloni"},{en:"jacket",it:"giacca"},{en:"shoes",it:"scarpe"},{en:"dress",it:"vestito"},{en:"coat",it:"cappotto"},{en:"scarf",it:"sciarpa"},{en:"belt",it:"cintura"}]},
+    {cat:"🏙️ Città / Places",words:[{en:"street",it:"strada"},{en:"shop",it:"negozio"},{en:"bank",it:"banca"},{en:"station",it:"stazione"},{en:"library",it:"biblioteca"},{en:"hospital",it:"ospedale"},{en:"market",it:"mercato"},{en:"square",it:"piazza"}]},
+    {cat:"🏃 Verbi comuni",words:[{en:"to buy",it:"comprare"},{en:"to sell",it:"vendere"},{en:"to walk",it:"camminare"},{en:"to run",it:"correre"},{en:"to bring",it:"portare"},{en:"to wear",it:"indossare"},{en:"to wait",it:"aspettare"},{en:"to choose",it:"scegliere"}]},
+    {cat:"🙋 Corpo / Body",words:[{en:"head",it:"testa"},{en:"hand",it:"mano"},{en:"arm",it:"braccio"},{en:"leg",it:"gamba"},{en:"eye",it:"occhio"},{en:"mouth",it:"bocca"},{en:"back",it:"schiena"},{en:"heart",it:"cuore"}]},
+    {cat:"🎯 Tempo libero",words:[{en:"hobby",it:"passatempo"},{en:"holiday",it:"vacanza"},{en:"weekend",it:"fine settimana"},{en:"party",it:"festa"},{en:"beach",it:"spiaggia"},{en:"gym",it:"palestra"},{en:"cinema",it:"cinema"},{en:"trip",it:"gita"}]}
+  ],
+  b1:[
+    {cat:"💼 Lavoro",words:[{en:"meeting",it:"riunione"},{en:"deadline",it:"scadenza"},{en:"colleague",it:"collega"},{en:"manager",it:"responsabile"},{en:"project",it:"progetto"},{en:"schedule",it:"programma"},{en:"salary",it:"stipendio"},{en:"report",it:"relazione"}]},
+    {cat:"✈️ Viaggi",words:[{en:"passport",it:"passaporto"},{en:"luggage",it:"bagaglio"},{en:"departure",it:"partenza"},{en:"arrival",it:"arrivo"},{en:"reservation",it:"prenotazione"},{en:"boarding pass",it:"carta d'imbarco"},{en:"customs",it:"dogana"},{en:"delay",it:"ritardo"}]},
+    {cat:"💊 Salute",words:[{en:"headache",it:"mal di testa"},{en:"fever",it:"febbre"},{en:"medicine",it:"medicina"},{en:"appointment",it:"appuntamento"},{en:"prescription",it:"ricetta"},{en:"symptoms",it:"sintomi"},{en:"allergy",it:"allergia"},{en:"pharmacy",it:"farmacia"}]},
+    {cat:"🎭 Emozioni",words:[{en:"happy",it:"felice"},{en:"sad",it:"triste"},{en:"angry",it:"arrabbiato"},{en:"excited",it:"entusiasta"},{en:"worried",it:"preoccupato"},{en:"proud",it:"orgoglioso"},{en:"disappointed",it:"deluso"},{en:"relieved",it:"sollevato"}]}
+  ],
+  b2:[
+    {cat:"💻 Tecnologia",words:[{en:"device",it:"dispositivo"},{en:"software",it:"software"},{en:"update",it:"aggiornamento"},{en:"backup",it:"copia di sicurezza"},{en:"network",it:"rete"},{en:"privacy",it:"riservatezza"},{en:"remote",it:"da remoto"},{en:"troubleshoot",it:"risolvere problemi"}]},
+    {cat:"📰 Media & Notizie",words:[{en:"headline",it:"titolo"},{en:"source",it:"fonte"},{en:"coverage",it:"copertura mediatica"},{en:"bias",it:"pregiudizio"},{en:"evidence",it:"prove"},{en:"claim",it:"affermazione"},{en:"misleading",it:"fuorviante"},{en:"reliable",it:"attendibile"}]},
+    {cat:"💬 Opinioni",words:[{en:"to argue",it:"sostenere"},{en:"to point out",it:"far notare"},{en:"drawback",it:"svantaggio"},{en:"benefit",it:"beneficio"},{en:"assumption",it:"presupposto"},{en:"trade-off",it:"compromesso"},{en:"reasonable",it:"ragionevole"},{en:"questionable",it:"discutibile"}]},
+    {cat:"🏢 Dinamiche di ufficio",words:[{en:"workload",it:"carico di lavoro"},{en:"feedback",it:"riscontro"},{en:"promotion",it:"promozione"},{en:"appraisal",it:"valutazione"},{en:"handover",it:"passaggio di consegne"},{en:"onboarding",it:"inserimento"},{en:"overtime",it:"straordinario"},{en:"turnover",it:"ricambio del personale"}]}
+  ],
+  c1:[
+    {cat:"📊 Business",words:[{en:"stakeholder",it:"parte interessata"},{en:"revenue",it:"fatturato"},{en:"acquisition",it:"acquisizione"},{en:"leverage",it:"leva"},{en:"benchmark",it:"riferimento"},{en:"scalable",it:"scalabile"},{en:"portfolio",it:"portafoglio"},{en:"synergy",it:"sinergia"}]},
+    {cat:"🎓 Accademico",words:[{en:"hypothesis",it:"ipotesi"},{en:"methodology",it:"metodologia"},{en:"empirical",it:"empirico"},{en:"paradigm",it:"paradigma"},{en:"dissertation",it:"dissertazione"},{en:"ambiguous",it:"ambiguo"},{en:"controversial",it:"controverso"},{en:"nuance",it:"sfumatura"}]},
+    {cat:"⚖️ Argomentare",words:[{en:"to substantiate",it:"comprovare"},{en:"to undermine",it:"minare"},{en:"compelling",it:"convincente"},{en:"inherent",it:"intrinseco"},{en:"conversely",it:"al contrario"},{en:"albeit",it:"sebbene"},{en:"notwithstanding",it:"nonostante"},{en:"to concede",it:"ammettere"}]},
+    {cat:"🎯 Leadership",words:[{en:"to delegate",it:"delegare"},{en:"accountability",it:"responsabilità"},{en:"to align",it:"allineare"},{en:"contingency",it:"piano alternativo"},{en:"to escalate",it:"portare a livello superiore"},{en:"bottleneck",it:"collo di bottiglia"},{en:"foresight",it:"lungimiranza"},{en:"resilience",it:"resilienza"}]}
+  ],
+  c2:[
+    {cat:"🎩 Registro formale",words:[{en:"to endeavour",it:"adoperarsi"},{en:"to ascertain",it:"accertare"},{en:"heretofore",it:"finora"},{en:"to preclude",it:"precludere"},{en:"ostensibly",it:"apparentemente"},{en:"tantamount to",it:"equivalente a"},{en:"insofar as",it:"nella misura in cui"},{en:"to obviate",it:"ovviare a"}]},
+    {cat:"🌀 Sfumature",words:[{en:"nuanced",it:"sfumato"},{en:"tenuous",it:"tenue / debole"},{en:"cogent",it:"stringente"},{en:"spurious",it:"fallace"},{en:"innocuous",it:"innocuo"},{en:"egregious",it:"madornale"},{en:"perfunctory",it:"superficiale"},{en:"meticulous",it:"meticoloso"}]},
+    {cat:"💎 Idiomi nativi",words:[{en:"to cut corners",it:"fare le cose alla svelta"},{en:"the elephant in the room",it:"il problema che nessuno nomina"},{en:"to move the needle",it:"fare la differenza"},{en:"a double-edged sword",it:"un'arma a doppio taglio"},{en:"to play devil's advocate",it:"fare l'avvocato del diavolo"},{en:"to bite the bullet",it:"stringere i denti"},{en:"to hit the ground running",it:"partire in quarta"},{en:"to touch base",it:"risentirsi"}]},
+    {cat:"🔗 Collocations",words:[{en:"to draw a distinction",it:"operare una distinzione"},{en:"to raise concerns",it:"sollevare perplessità"},{en:"to meet expectations",it:"soddisfare le aspettative"},{en:"to bear responsibility",it:"assumersi la responsabilità"},{en:"a vested interest",it:"un interesse personale"},{en:"a foregone conclusion",it:"una conclusione scontata"},{en:"to set a precedent",it:"creare un precedente"},{en:"to strike a balance",it:"trovare un equilibrio"}]}
+  ]
+};
+const PHRASES={
+  a1:[
+    {en:"Good morning!",it:"Buongiorno!",ctx:"Saluto mattutino"},{en:"Good evening!",it:"Buonasera!",ctx:"Saluto serale"},
+    {en:"How are you?",it:"Come stai?",ctx:"Chiedere come sta qualcuno"},{en:"I'm fine, thank you!",it:"Sto bene, grazie!",ctx:"Risposta"},
+    {en:"What is your name?",it:"Come ti chiami?",ctx:"Chiedere il nome"},{en:"My name is...",it:"Mi chiamo...",ctx:"Presentarsi"},
+    {en:"Nice to meet you!",it:"Piacere!",ctx:"Prima presentazione"},{en:"Please",it:"Per favore",ctx:"Richiesta educata"},
+    {en:"Thank you very much!",it:"Grazie mille!",ctx:"Ringraziare"},{en:"You're welcome!",it:"Prego!",ctx:"Risposta"},
+    {en:"Excuse me!",it:"Scusi!",ctx:"Attirare attenzione"},{en:"I'm sorry.",it:"Mi dispiace.",ctx:"Scusarsi"},
+    {en:"I don't understand.",it:"Non capisco.",ctx:"Quando non si capisce"},{en:"Can you repeat, please?",it:"Può ripetere?",ctx:"Fare ripetere"},
+    {en:"Where is the bathroom?",it:"Dov'è il bagno?",ctx:"Richiesta fondamentale"},{en:"How much does it cost?",it:"Quanto costa?",ctx:"Prezzo"},
+    {en:"I would like...",it:"Vorrei...",ctx:"Fare un ordine"},{en:"See you tomorrow!",it:"A domani!",ctx:"Arrivederci"},
+    {en:"Have a nice day!",it:"Buona giornata!",ctx:"Saluto"},{en:"I love you!",it:"Ti amo!",ctx:"Affetto"}
+  ],
+  a2:[
+    {en:"Could I have the bill, please?",it:"Posso avere il conto?",ctx:"Al ristorante"},{en:"I'd like to book a table for two.",it:"Vorrei prenotare un tavolo per due.",ctx:"Prenotare"},
+    {en:"How do I get to the station?",it:"Come arrivo alla stazione?",ctx:"Chiedere indicazioni"},{en:"It's just around the corner.",it:"È proprio dietro l'angolo.",ctx:"Dare indicazioni"},
+    {en:"What time does it open?",it:"A che ora apre?",ctx:"Orari"},{en:"I'm just looking, thanks.",it:"Sto solo guardando, grazie.",ctx:"Nei negozi"},
+    {en:"Do you have this in a smaller size?",it:"Ce l'ha in una taglia più piccola?",ctx:"Shopping"},{en:"Can I pay by card?",it:"Posso pagare con la carta?",ctx:"Pagare"},
+    {en:"I'm not feeling very well.",it:"Non mi sento molto bene.",ctx:"Salute"},{en:"What's the weather like today?",it:"Che tempo fa oggi?",ctx:"Meteo"},
+    {en:"I usually get up at seven.",it:"Di solito mi alzo alle sette.",ctx:"Routine"},{en:"I'm looking forward to the weekend.",it:"Non vedo l'ora che arrivi il weekend.",ctx:"Aspettative"}
+  ],
+  b1:[
+    {en:"Could you help me, please?",it:"Potrebbe aiutarmi?",ctx:"Richiesta formale"},{en:"I'm afraid I can't make it.",it:"Temo di non riuscire.",ctx:"Cancellare un impegno"},
+    {en:"That sounds great!",it:"Sembra ottimo!",ctx:"Entusiasmo"},{en:"I was wondering if...",it:"Mi chiedevo se...",ctx:"Richiesta delicata"},
+    {en:"To be honest...",it:"Per essere onesto...",ctx:"Sincerità"},{en:"As far as I know...",it:"Per quanto ne so...",ctx:"Incertezza"},
+    {en:"It depends on...",it:"Dipende da...",ctx:"Condizionale"},{en:"I'll keep that in mind.",it:"Lo terrò a mente.",ctx:"Risposta a consiglio"},
+    {en:"That makes sense.",it:"Ha senso.",ctx:"Confermare"},{en:"Let me think about it.",it:"Ci penso su.",ctx:"Prendere tempo"},
+    {en:"What do you mean?",it:"Cosa intendi?",ctx:"Chiarimento"},{en:"I couldn't agree more.",it:"Sono completamente d'accordo.",ctx:"Forte accordo"}
+  ],
+  b2:[
+    {en:"Just to clarify, are you saying that...?",it:"Giusto per chiarire, sta dicendo che...?",ctx:"Riunione — chiarire"},
+    {en:"I see your point, but have we considered...?",it:"Capisco, ma abbiamo considerato...?",ctx:"Obiettare con garbo"},
+    {en:"Let me circle back to you on that.",it:"Le faccio sapere su questo punto.",ctx:"Prendere tempo (business)"},
+    {en:"I'd rather we postponed the decision.",it:"Preferirei rimandare la decisione.",ctx:"Proporre un rinvio"},
+    {en:"Could you walk me through the numbers?",it:"Può illustrarmi i numeri?",ctx:"Chiedere dettagli"},
+    {en:"That's not quite what I had in mind.",it:"Non è esattamente quello che avevo in mente.",ctx:"Dissenso morbido"},
+    {en:"We're on the same page.",it:"Siamo sulla stessa lunghezza d'onda.",ctx:"Confermare allineamento"},
+    {en:"I'll take ownership of that.",it:"Me ne assumo la responsabilità.",ctx:"Assumersi un compito"},
+    {en:"Correct me if I'm wrong, but...",it:"Mi corregga se sbaglio, ma...",ctx:"Introdurre un dubbio"},
+    {en:"Let's park that for now.",it:"Accantoniamolo per ora.",ctx:"Rimandare un tema"},
+    {en:"What's the rationale behind that?",it:"Qual è la logica dietro a questo?",ctx:"Chiedere motivazioni"},
+    {en:"I'd appreciate your feedback on this.",it:"Gradirei un suo riscontro.",ctx:"Chiedere feedback"}
+  ],
+  c1:[
+    {en:"I beg to differ.",it:"Mi permetto di dissentire.",ctx:"Dissentire educatamente"},{en:"It's worth bearing in mind...",it:"Vale la pena ricordare...",ctx:"Punto importante"},
+    {en:"All things considered...",it:"Tutto considerato...",ctx:"Conclusione"},{en:"The fact of the matter is...",it:"Il fatto è che...",ctx:"Affermare"},
+    {en:"On the contrary...",it:"Al contrario...",ctx:"Contraddire"},{en:"In light of recent events...",it:"Alla luce degli ultimi eventi...",ctx:"Contesto"},
+    {en:"I take your point, however...",it:"Capisco, tuttavia...",ctx:"Contro-argomento"},{en:"Needless to say...",it:"Inutile dire che...",ctx:"Ovvio"},
+    {en:"With all due respect, the data suggests otherwise.",it:"Con tutto il rispetto, i dati dicono altro.",ctx:"Contestare con dati"},
+    {en:"I'm inclined to think that...",it:"Sono propenso a pensare che...",ctx:"Opinione misurata"},
+    {en:"That rather undermines the argument.",it:"Questo indebolisce l'argomentazione.",ctx:"Confutare"},
+    {en:"Let's not lose sight of the bigger picture.",it:"Non perdiamo di vista il quadro generale.",ctx:"Riportare al focus"}
+  ],
+  c2:[
+    {en:"I'd hesitate to draw such a sweeping conclusion.",it:"Esiterei a trarre una conclusione così generale.",ctx:"Cautela accademica"},
+    {en:"That's a distinction without a difference.",it:"È una distinzione puramente formale.",ctx:"Smontare un cavillo"},
+    {en:"You're conflating two separate issues.",it:"Sta confondendo due questioni distinte.",ctx:"Correggere un ragionamento"},
+    {en:"Be that as it may, the underlying problem persists.",it:"Sia come sia, il problema di fondo resta.",ctx:"Concedere e ribattere"},
+    {en:"I'd venture to suggest an alternative reading.",it:"Mi permetterei di proporre una lettura alternativa.",ctx:"Proporre con understatement"},
+    {en:"That argument doesn't hold water.",it:"Quell'argomento non regge.",ctx:"Demolire una tesi"},
+    {en:"To play devil's advocate for a moment...",it:"Facendo l'avvocato del diavolo un istante...",ctx:"Introdurre obiezione"},
+    {en:"It would be remiss of me not to mention...",it:"Sarei negligente se non menzionassi...",ctx:"Formale, aggiungere"},
+    {en:"The evidence is, at best, circumstantial.",it:"Le prove sono, nel migliore dei casi, indiziarie.",ctx:"Valutazione critica"},
+    {en:"I'll grant you that much, but no further.",it:"Le concedo questo, ma non oltre.",ctx:"Concessione limitata"},
+    {en:"That rather begs the question, doesn't it?",it:"Questo presuppone la conclusione, non trova?",ctx:"Rilevare una fallacia"},
+    {en:"Let's not conflate correlation with causation.",it:"Non confondiamo correlazione e causalità.",ctx:"Rigore logico"}
+  ]
+};
+const QUIZ={
+  a1:[
+    {q:"Come si dice 'casa'?",opts:["house","horse","mouse","hat"],ok:0},
+    {q:"Saluto mattutino?",opts:["Good night","Good morning","Good evening","Goodbye"],ok:1},
+    {q:"Come si dice 'grazie'?",opts:["Please","Sorry","Thank you","Hello"],ok:2},
+    {q:"'My name ___ John'",opts:["are","am","is","be"],ok:2},
+    {q:"Come si dice 'acqua'?",opts:["wine","milk","water","juice"],ok:2},
+    {q:"Rosso in inglese?",opts:["blue","green","yellow","red"],ok:3},
+    {q:"Come si chiede il prezzo?",opts:["How much does it cost?","Where is it?","What time is it?","How old are you?"],ok:0},
+    {q:"'Monday' significa:",opts:["Martedì","Mercoledì","Lunedì","Giovedì"],ok:2},
+    {q:"'I ___ a student'",opts:["is","are","am","be"],ok:2},
+    {q:"'Prego' in inglese?",opts:["Sorry","Please","You're welcome","Excuse me"],ok:2},
+    {q:"'Apple' significa:",opts:["arancia","mela","banana","pera"],ok:1},
+    {q:"'Good evening' significa:",opts:["buongiorno","buonanotte","buonasera","ciao"],ok:2}
+  ],
+  a2:[
+    {q:"'She ___ coffee every morning.'",opts:["drink","drinks","drinking","is drink"],ok:1},
+    {q:"Passato di 'buy'?",opts:["buyed","boughted","bought","buys"],ok:2},
+    {q:"'There ___ some milk in the fridge.'",opts:["are","is","have","be"],ok:1},
+    {q:"'Trousers' significa:",opts:["scarpe","pantaloni","camicia","cintura"],ok:1},
+    {q:"'I'm going ___ the station.'",opts:["at","in","to","on"],ok:2},
+    {q:"Comparativo di 'big'?",opts:["more big","bigger","biggest","more bigger"],ok:1},
+    {q:"'Cloudy' significa:",opts:["soleggiato","nuvoloso","ventoso","piovoso"],ok:1},
+    {q:"'How ___ sugar do you want?'",opts:["many","much","some","lot"],ok:1},
+    {q:"'I ___ to the cinema last night.'",opts:["go","goes","went","gone"],ok:2},
+    {q:"'Can I pay ___ card?'",opts:["with","by","in","for"],ok:1}
+  ],
+  b1:[
+    {q:"Passato di 'go'?",opts:["goed","went","gone","going"],ok:1},
+    {q:"'If I ___ you, I would go'",opts:["am","was","were","be"],ok:2},
+    {q:"Forma corretta?",opts:["here since 2 hours","here for 2 hours","here since 2 hour","here for 2 hour"],ok:1},
+    {q:"'Luggage' significa:",opts:["luce","bagaglio","villaggio","lusso"],ok:1},
+    {q:"'She ___ to the gym every day'",opts:["go","goes","going","gone"],ok:1},
+    {q:"Condizionale corretta?",opts:["If I had known, I would help","If I had known, I would have helped","If I knew, I would helped","If I know, I will have helped"],ok:1},
+    {q:"'Deadline' significa:",opts:["linea morta","fine settimana","scadenza","confine"],ok:2},
+    {q:"'I wish I ___ taller'",opts:["am","was","were","be"],ok:2}
+  ],
+  b2:[
+    {q:"'By the time we arrived, the meeting ___.'",opts:["ended","has ended","had ended","was ending"],ok:2},
+    {q:"'He denied ___ the file.'",opts:["to delete","deleting","delete","deleted"],ok:1},
+    {q:"'Trade-off' significa:",opts:["scambio commerciale","compromesso","affare","sconto"],ok:1},
+    {q:"Passivo corretto?",opts:["The report is being reviewed","The report is reviewing","The report reviews","The report has reviewing"],ok:0},
+    {q:"'I'd rather you ___ tell him.'",opts:["don't","didn't","won't","wouldn't"],ok:1},
+    {q:"'Misleading' significa:",opts:["fuorviante","mancante","noioso","incerto"],ok:0},
+    {q:"'Not only ___ late, but he also forgot.'",opts:["he was","was he","he is","is he"],ok:1},
+    {q:"Registro più professionale?",opts:["I want to know why","Could you clarify the reasoning?","Tell me why","Why is that"],ok:1},
+    {q:"'The project, ___ budget was cut, failed.'",opts:["which","whose","that","who"],ok:1},
+    {q:"'Handover' significa:",opts:["consegna a mano","passaggio di consegne","straordinario","promozione"],ok:1}
+  ],
+  c1:[
+    {q:"Subjunctive corretto?",opts:["I insist that he goes","I insist that he go","I insist that he would go","I insist that he is going"],ok:1},
+    {q:"Sinonimo di 'ambiguous'?",opts:["chiaro","equivoco","strano","difficile"],ok:1},
+    {q:"Uso corretto di 'despite'?",opts:["Despite of the rain","Despite it rained","Despite the rain","Despite that rain"],ok:2},
+    {q:"'No sooner ___ he left ___ it rained'",opts:["had / than","did / than","has / when","had / when"],ok:0},
+    {q:"Frase più formale?",opts:["I need help","Could you possibly assist me?","Help me please","I want help"],ok:1},
+    {q:"'To beg to differ' significa:",opts:["aspettare","dissentire educatamente","chiedere aiuto","rimandare"],ok:1},
+    {q:"'Bottleneck' in un progetto è:",opts:["un guadagno","un collo di bottiglia","una scadenza","una riunione"],ok:1},
+    {q:"'___ the circumstances, we proceeded.'",opts:["Despite","Notwithstanding","Although","However"],ok:1},
+    {q:"'To undermine' significa:",opts:["rafforzare","minare","sottolineare","sostituire"],ok:1},
+    {q:"'Had I known, I ___ differently.'",opts:["would act","would have acted","had acted","will act"],ok:1}
+  ],
+  c2:[
+    {q:"'That argument doesn't hold water' significa:",opts:["è impermeabile","non regge","è complesso","è nuovo"],ok:1},
+    {q:"'Tantamount to' significa:",opts:["equivalente a","contrario a","successivo a","nonostante"],ok:0},
+    {q:"'Egregious' descrive un errore:",opts:["lieve","madornale","raro","tecnico"],ok:1},
+    {q:"'To conflate' significa:",opts:["gonfiare","confondere due cose distinte","confermare","concludere"],ok:1},
+    {q:"Understatement britannico per 'terribile'?",opts:["Absolutely dreadful","Not ideal, I'm afraid","A catastrophe","The worst ever"],ok:1},
+    {q:"'A foregone conclusion' è:",opts:["una conclusione scontata","una conclusione errata","una premessa","un dubbio"],ok:0},
+    {q:"'Perfunctory' significa:",opts:["meticoloso","superficiale","perfetto","obbligatorio"],ok:1},
+    {q:"'Insofar as' introduce:",opts:["una causa","una misura/limite","un tempo","un contrasto"],ok:1},
+    {q:"'To obviate the need for X' significa:",opts:["evidenziare X","rendere X superfluo","richiedere X","ritardare X"],ok:1},
+    {q:"'Spurious reasoning' è un ragionamento:",opts:["rigoroso","fallace","originale","complesso"],ok:1}
+  ]
+};
+const IT={
+  "ciao":{en:"hello / hi",l:"Puoi dire 'Hello!' o 'Hi!' — informale e amichevole!"},
+  "buongiorno":{en:"good morning",l:"'Good morning' si usa fino a mezzogiorno!"},
+  "buonasera":{en:"good evening",l:"'Good evening' dal pomeriggio in poi."},
+  "buonanotte":{en:"good night",l:"'Good night' quando qualcuno va a dormire."},
+  "arrivederci":{en:"goodbye",l:"'Goodbye', 'Bye!', 'See you!' o 'Take care!'"},
+  "grazie":{en:"thank you",l:"'Thank you' o 'Thanks'. Enfasi: 'Thank you very much!'"},
+  "prego":{en:"you're welcome",l:"'You're welcome!' Anche: 'No problem!' o 'Of course!'"},
+  "per favore":{en:"please",l:"'Please' rende ogni richiesta più educata!"},
+  "scusa":{en:"sorry / excuse me",l:"'Sorry' per scusarsi, 'Excuse me' per attenzione."},
+  "aiuto":{en:"help",l:"'Help!' o 'Can you help me, please?'"},
+  "non capisco":{en:"I don't understand",l:"'I don't understand. Can you explain?'"},
+  "capisco":{en:"I understand",l:"'I understand' o 'I see' o 'Got it!'"},
+  "bello":{en:"beautiful / nice",l:"'Beautiful' per cose/persone, 'Nice' informale."},
+  "grande":{en:"big / great",l:"'Big' per dimensioni, 'Great' per qualità."},
+  "piccolo":{en:"small / little / tiny",l:"'Tiny' = piccolissimo!"},
+  "mangiare":{en:"to eat",l:"I eat → I ate → I have eaten."},
+  "bere":{en:"to drink",l:"I drink → I drank → I have drunk."},
+  "dormire":{en:"to sleep",l:"I sleep → I slept → I have slept."},
+  "andare":{en:"to go",l:"Irregolare! I go → I went → I have gone."},
+  "venire":{en:"to come",l:"I come → I came → I have come."},
+  "amore":{en:"love",l:"'I love you' = Ti amo. 'I love pizza' = Adoro la pizza!"},
+  "casa":{en:"house / home",l:"'House' = edificio fisico. 'Home' = dove vivi."},
+  "lavoro":{en:"work / job",l:"'Work' come verbo. 'Job' come sostantivo."},
+  "soldi":{en:"money",l:"Non numerabile. 'I need money' = Ho bisogno di soldi."},
+  "tempo":{en:"time / weather",l:"'time' (l'ora) o 'weather' (il meteo)."},
+  "amico":{en:"friend",l:"'My best friend' = Il mio migliore amico."},
+  "famiglia":{en:"family",l:"'My family' = La mia famiglia."},
+  "scuola":{en:"school",l:"'I go to school' = Vado a scuola."},
+  "libro":{en:"book",l:"'I'm reading a book' = Sto leggendo un libro."},
+  "musica":{en:"music",l:"'I love music' = Adoro la musica."},
+  "cane":{en:"dog",l:"'My dog is cute' = Il mio cane è carino. 🐶"},
+  "gatto":{en:"cat",l:"'My cat is lazy' = Il mio gatto è pigro. 🐱"},
+  "sole":{en:"sun",l:"'The sun is shining' = Il sole splende."},
+  "mare":{en:"sea / ocean",l:"'I love the sea' = Adoro il mare."},
+  "pioggia":{en:"rain",l:"'It's raining' = Sta piovendo. 🌧️"},
+  "freddo":{en:"cold",l:"'It's cold today' = Oggi fa freddo."},
+  "caldo":{en:"hot / warm",l:"'Hot' molto caldo, 'Warm' piacevolmente caldo."},
+  "felice":{en:"happy",l:"'I'm so happy!' = Sono così felice!"},
+  "triste":{en:"sad",l:"'I'm feeling sad' = Mi sento triste."},
+  "stanco":{en:"tired",l:"'I'm tired' = Sono stanco/a."},
+  "fame":{en:"hungry",l:"'I'm hungry' = Ho fame."},
+  "sete":{en:"thirsty",l:"'I'm thirsty' = Ho sete."}
+};
+const RS=[
+  {tr:['hello','hi','hey','good morning','good evening'],rs:[{m:"Hello! 😊 Great to practice with you! How are you today?",t:"Ciao!"},{m:"Hi! 👋 I'm Luna, your AI English tutor. What shall we learn?",t:"Cosa impariamo oggi?"}]},
+  {tr:['how are you',"what's up","how's it going"],rs:[{m:"I'm wonderful, thanks! 😄 And you? Try in English: 'I'm fine!' or 'I'm great!'",t:"Prova a rispondere in inglese!"}]},
+  {tr:['your name','who are you','chi sei','come ti chiami'],rs:[{m:"My name is Luna! 🌙 Your AI English tutor. And you? Say: 'My name is...'",t:"Mi chiamo Luna!"}]},
+  {tr:['help','aiutami','non so',"i don't know"],rs:[{m:"Don't worry! 😊 Type any Italian word — I'll translate it! Or try: food, family, weather…",t:"Non preoccuparti!"},{m:"I'm here! 💫 Mistakes are part of learning. What topic interests you?",t:"Sono qui!"}]},
+  {tr:['grammar','grammatica','verbo','verb'],rs:[{m:"📝 Main tenses:\n• Present: I eat (mangio)\n• Past: I ate (ho mangiato)\n• Future: I will eat (mangerò)\n• Continuous: I am eating (sto mangiando)\n\nWhich do you want to practice?",t:"I tempi verbali!"}]},
+  {tr:['color','colours','colors','colore','colori'],rs:[{m:"🎨 Colors:\nRed · Blue · Green · Yellow\nWhite · Black · Orange · Purple\n\nWhat's your favourite color?",t:"I colori!"}]},
+  {tr:['food','eat','cibo','mangiare','hungry','restaurant'],rs:[{m:"🍕 Food:\nPizza · Pasta · Bread=Pane · Water=Acqua\nCoffee=Caffè · Wine=Vino\n\nIn a restaurant: 'I would like pasta, please!'",t:"Vocabolario del cibo!"}]},
+  {tr:['weather','meteo','pioggia','rain','sun','caldo','freddo'],rs:[{m:"☀️ Weather:\n• It's sunny! (C'è il sole)\n• It's raining. (Sta piovendo)\n• It's cold. (Fa freddo) · It's hot. (Fa caldo)\n\nDescribe today: 'Today it is...'",t:"Il meteo!"}]},
+  {tr:['family','famiglia','mother','father','sister','brother'],rs:[{m:"👨‍👩‍👧 Family:\nMother=Mamma · Father=Papà\nSister=Sorella · Brother=Fratello\nGrandmother=Nonna · Grandfather=Nonno\n\nDescribe your family!",t:"La famiglia!"}]},
+  {tr:['number','numeri','one','two','three'],rs:[{m:"🔢 Numbers:\n1=one 2=two 3=three 4=four 5=five\n6=six 7=seven 8=eight 9=nine 10=ten\n20=twenty · 100=hundred\n\nSay 15 in English!",t:"I numeri!"}]},
+  {tr:['time','ora','che ora','what time'],rs:[{m:"🕐 Telling time:\n3:00 → three o'clock\n3:30 → half past three\n3:15 → quarter past three\n3:45 → quarter to four\n\nWhat time is it now?",t:"L'ora!"}]},
+  {tr:['bravo','well done','perfect','great','bravissimo','grazie luna'],rs:[{m:"Thank you! 🌟 You're so kind! Keep going — you're improving every day!",t:"Grazie!"}]},
+  {tr:['bye','goodbye','ciao ciao','arrivederci','see you'],rs:[{m:"Goodbye! 🌙 10 minutes a day makes a huge difference. See you soon!",t:"Arrivederci!"}]}
+];
+const DEF=[
+  {m:"Type any Italian word and I'll translate it! Try: 'grazie', 'ciao', 'mangiare'… 🇮🇹→🇬🇧",t:"Scrivi una parola italiana!"},
+  {m:"'Practice makes perfect' — La pratica rende perfetti! 💪 Keep going!",t:"Continua!"},
+  {m:"Vuoi parlare di qualcosa? Chiedimi di: **AI**, **finanza**, **tecnologia**, **salute**, **viaggi**, **startup**… rispondo in inglese così pratichi! 🌍",t:"Scegli un argomento!"},
+  {m:"Try introducing yourself: 'My name is ___, I'm from Italy, I enjoy ___' 😊",t:"Presentati in inglese!"},
+  {m:"Think in English for daily things too: 'I'm hungry.' 'It's cold.' 'I'm tired.' 🧠",t:"Pensa in inglese!"}
+];
+
+// ── GRAMMAR ERROR CHECKER ─────────────────────────────────────────────────────
+const GERR=[
+  {re:/\bgoed\b/i,fix:s=>s.replace(/\bgoed\b/gi,'went'),tip:"'Go' è irregolare: go → **went** → gone"},
+  {re:/\bi\s+have\s+go\b/i,fix:s=>s.replace(/have\s+go/i,'have gone'),tip:"Present perfect: have + past participle → **have gone**"},
+  {re:/\bbuyed\b/i,fix:s=>s.replace(/\bbuyed\b/gi,'bought'),tip:"'Buy' è irregolare: buy → **bought** → bought"},
+  {re:/\bthinked\b/i,fix:s=>s.replace(/\bthinked\b/gi,'thought'),tip:"'Think' è irregolare: think → **thought** → thought"},
+  {re:/\bteached\b/i,fix:s=>s.replace(/\bteached\b/gi,'taught'),tip:"'Teach' è irregolare: teach → **taught** → taught"},
+  {re:/\bmaked\b/i,fix:s=>s.replace(/\bmaked\b/gi,'made'),tip:"'Make' è irregolare: make → **made** → made"},
+  {re:/\bmore\s+better\b/i,fix:s=>s.replace(/more\s+better/gi,'better'),tip:"'Better' è già il comparativo di good — non aggiungere 'more'"},
+  {re:/\bmore\s+worse\b/i,fix:s=>s.replace(/more\s+worse/gi,'worse'),tip:"'Worse' è già il comparativo di bad — no 'more'"},
+  {re:/\bi\s+am\s+agree\b/i,fix:s=>s.replace(/i\s+am\s+agree\b/i,'I agree'),tip:"Non si usa 'to be' con agree → solo **'I agree'**"},
+  {re:/\bi\s+am\s+boring\b/i,fix:s=>s.replace(/i\s+am\s+boring\b/i,'I am bored'),tip:"**Bored** = annoiato(a). **Boring** = noioso(a) — sei tu la persona noiosa! 😄"},
+  {re:/\bi\s+am\s+interesting\b/i,fix:s=>s.replace(/i\s+am\s+interesting\b/i,'I am interested'),tip:"**Interested** = interessato(a). **Interesting** = interessante (per gli altri)"},
+  {re:/\bi\s+am\s+exciting\b/i,fix:s=>s.replace(/i\s+am\s+exciting\b/i,'I am excited'),tip:"**Excited** = entusiasta. **Exciting** = emozionante (descrizione di una cosa)"},
+  {re:/\bi\s+am\s+confusing\b/i,fix:s=>s.replace(/i\s+am\s+confusing\b/i,'I am confused'),tip:"**Confused** = confuso. **Confusing** = che crea confusione (di una cosa)"},
+  {re:/\bdon'?t\s+know\s+nothing\b/i,fix:s=>s.replace(/don'?t\s+know\s+nothing/i,"don't know anything"),tip:"Doppia negazione non esiste in inglese: **'I don't know anything'**"},
+  {re:/\bcan'?t\s+do\s+nothing\b/i,fix:s=>s.replace(/can'?t\s+do\s+nothing/i,"can't do anything"),tip:"Doppia negazione: usa **'anything'** con 'can't'"},
+  {re:/\bsince\s+\d+\s+(days?|weeks?|months?|years?|hours?|minutes?)\b/i,fix:null,tip:"Con periodi di tempo usa **'for'**, non 'since': **'for 3 days'** (since = dal momento in cui)"},
+  {re:/\byesterday\b[\s\S]*?\b(i\s+have|i've|have\s+i)\b|\b(i\s+have|i've)\b[\s\S]*?\byesterday\b/i,fix:null,tip:"Con 'yesterday' usa il **past simple**, non il present perfect: **'I saw him yesterday'** (non 'I have seen yesterday')"},
+  {re:/\b(advices|informations|furnitures|luggages|equipments|knowledges)\b/i,fix:s=>s.replace(/advices/gi,'advice').replace(/informations/gi,'information').replace(/furnitures/gi,'furniture').replace(/luggages/gi,'luggage').replace(/equipments/gi,'equipment').replace(/knowledges/gi,'knowledge'),tip:"Questi nomi sono **non numerabili** in inglese — nessun plurale: advice, information, furniture, luggage"},
+  {re:/\bI\s+thinking\b/i,fix:s=>s.replace(/I\s+thinking/i,'I am thinking'),tip:"In inglese il verbo ausiliare è obbligatorio: **'I AM thinking'**"},
+  {re:/\bI\s+going\b(?!\s+to)/i,fix:s=>s.replace(/I\s+going(?!\s+to)/i,'I am going'),tip:"Serve l'ausiliare: **'I AM going'** — non puoi omettere 'to be'"},
+  {re:/\bcan\s+to\s+[a-z]+/i,fix:s=>s.replace(/can\s+to\s+/gi,'can '),tip:"Dopo i modali (can, will, must, should) NON si usa 'to': **'I can speak'**, non 'I can to speak'"},
+  {re:/\bmust\s+to\s+[a-z]+/i,fix:s=>s.replace(/must\s+to\s+/gi,'must '),tip:"**'I must go'** — no 'to' dopo must"},
+  {re:/\bI\s+am\s+\d+\s+years\b(?!\s+old)/i,fix:s=>s.replace(/(\d+\s+years)\b(?!\s+old)/i,'$1 old'),tip:"Non dimenticare **'old'**: I am 25 years **old**"},
+  {re:/\bI\s+have\s+\d+\s+years\b/i,fix:null,tip:"In inglese si usa **'to be'** per l'età: **'I am 25'**, non 'I have 25 years'"},
+  {re:/\bmake\s+a\s+question\b/i,fix:s=>s.replace(/make\s+a\s+question/gi,'ask a question'),tip:"In inglese si **asks** una domanda, non 'make': **'ask a question'**"},
+  {re:/\bmake\s+a\s+mistake\b/i,fix:null,tip:"✅ Bravo! 'Make a mistake' è corretto — si 'fa' un errore, non 'do a mistake'"},
+  {re:/\bdo\s+a\s+party\b/i,fix:s=>s.replace(/do\s+a\s+party/gi,'have a party'),tip:"Si **has** una festa: **'have a party'**, non 'do a party'"},
+];
+
+// Elegant, non-negotiable correction format
+function fmtCorrection(raw,corrected,tip){
+  let m=`🔧 **CORRECTION**\n`;
+  if(corrected&&corrected.toLowerCase()!==raw.toLowerCase()){
+    m+=`❌ *"${raw}"*\n✅ *"${corrected}"*\n`;
+  }else{
+    m+=`❌ *"${raw}"*\n`;
+  }
+  m+=`💡 ${tip}`;
+  return m;
+}
+function checkGrammar(raw){
+  const txt=raw.toLowerCase();
+  for(const e of GERR){
+    if(e.re.test(txt)){
+      const corrected=e.fix?e.fix(raw):null;
+      const spk=corrected&&corrected.toLowerCase()!==raw.toLowerCase()
+        ?corrected
+        :'Note the correction, then continue.';
+      return{m:fmtCorrection(raw,corrected,e.tip),t:'Correzione',corr:true,spk};
+    }
+  }
+  return null;
+}
+
+// ── KNOWLEDGE BASE ─────────────────────────────────────────────────────────────
+const TOPICS=[
+  {tr:['artificial intelligence','machine learning','deep learning','neural network','chatgpt','openai','llm','gpt','ai model','algoritm','algoritmo','intelligenza artificiale'],
+  rs:[
+    {m:"**Artificial Intelligence** 🤖 — vocabulary you need:\n\n• **Machine Learning** — computers learn from data, without being programmed explicitly\n• **Neural Network** — a system inspired by the human brain\n• **LLM** (Large Language Model) — AI trained on massive text data (like me!)\n• **Prompt** — your instruction to the AI\n• **Training data** — the data used to teach the AI\n• **Hallucination** — when AI confidently states something wrong\n• **Fine-tuning** — customising a model for a specific task\n\n💡 Interesting: ChatGPT reached 100 million users in just 2 months — the fastest app ever!\n\nTry in English: *'I think AI will change ___ because ___'*",t:"L'intelligenza artificiale!"},
+    {m:"**How does an AI like me work?** 🧠\n\n1. **Pre-training** — I read billions of web pages, books, code\n2. **Tokenisation** — text is split into small pieces (tokens)\n3. **Prediction** — I predict the most likely next token\n4. **RLHF** — humans rated my responses to make me more helpful\n5. **Context window** — I can only 'remember' our current conversation\n\n⚠️ **Key limitation**: I don't have real-time internet access — my knowledge has a cutoff date.\n\nWhat aspect of AI interests you most?",t:"Come funziona l'AI!"}
+  ]},
+  {tr:['python','javascript','typescript','html','css','programming','coding','developer','software','api','github','git','react','node','backend','frontend','fullstack','java','c++','database','sql','cloud','aws','docker','kubernetes'],
+  rs:[
+    {m:"**Programming vocabulary** 💻 — essential English terms:\n\n• **Repository** (repo) — where your code is stored\n• **Commit** — saving a snapshot of your code\n• **Pull Request** (PR) — asking to merge your code\n• **Debug** — finding and fixing errors\n• **Deploy** — publishing your app to the internet\n• **Refactor** — improving code without changing its function\n• **Stack** — the combination of technologies you use\n• **API** — how applications talk to each other\n• **Latency** — delay between request and response\n• **Scalability** — ability to handle more users/data\n\n🔥 Most in-demand in 2024: Python, TypeScript, Rust, Go\n\nWhat's your tech stack?",t:"Il mondo della programmazione!"},
+    {m:"**AI & Dev vocabulary** 🤖💻\n\n• **Prompt engineering** — crafting effective AI instructions\n• **RAG** — Retrieval Augmented Generation (AI + your data)\n• **Vector database** — stores AI embeddings (Pinecone, Weaviate)\n• **Embeddings** — numerical representation of text meaning\n• **Open source** — code anyone can see and contribute to\n• **SaaS** — Software as a Service (subscription model)\n• **CI/CD** — Continuous Integration / Continuous Deployment\n• **Microservices** — small, independent services\n\nThe best developers speak good English — all docs, Stack Overflow, and GitHub are in English! 🚀",t:"Dev e AI!"}
+  ]},
+  {tr:['bitcoin','ethereum','crypto','cryptocurrency','blockchain','nft','defi','web3','token','wallet','mining','btc','eth','solana','binance'],
+  rs:[
+    {m:"**Cryptocurrency** 💰 — key vocabulary:\n\n• **Blockchain** — a decentralised, immutable public ledger\n• **Wallet** — software to store and manage crypto\n• **Private key** — secret code that controls your crypto (never share!)\n• **DeFi** — Decentralised Finance (finance without banks)\n• **Staking** — locking crypto to earn rewards\n• **Gas fees** — transaction costs on Ethereum\n• **Volatility** — extreme price swings 📈📉\n• **Bull run** — sustained upward price trend\n• **Bear market** — prolonged downward trend\n• **DYOR** — Do Your Own Research\n• **FOMO** — Fear Of Missing Out\n• **HODL** — Hold On for Dear Life\n\n⚠️ Always research before investing. Crypto is high risk!",t:"Il mondo crypto!"}
+  ]},
+  {tr:['invest','investing','stock','shares','market','portfolio','dividend','etf','fund','bond','inflation','economy','gdp','recession','budget','saving','trading','forex','rendimento','borsa','azioni','obbligazioni'],
+  rs:[
+    {m:"**Investing vocabulary** 📈\n\n• **Stock / Share** — ownership in a company\n• **Dividend** — profit paid to shareholders\n• **ETF** — Exchange Traded Fund (basket of stocks, low cost)\n• **Index fund** — tracks a market index (S&P 500, etc.)\n• **Portfolio** — your collection of investments\n• **Diversification** — spreading risk across assets\n• **Compound interest** — interest on interest → the 8th wonder of the world!\n• **P/E ratio** — Price to Earnings (valuation metric)\n• **Bull/Bear market** — rising/falling market\n• **Hedge** — protecting against losses\n• **Liquidity** — how easily an asset can be sold\n\n💡 *'The stock market is a device for transferring money from the impatient to the patient.'* — Warren Buffett",t:"Il mondo degli investimenti!"},
+    {m:"**Personal Finance** 💳\n\n• **Budget** — a plan allocating your money\n• **Net worth** — total assets minus total debts\n• **Emergency fund** — 3–6 months of expenses, always accessible\n• **Inflation** — the gradual decrease in money's purchasing power\n• **Interest rate** — the cost of borrowing money\n• **Mortgage** — a loan to buy property\n• **Credit score** — your financial trustworthiness rating\n• **Passive income** — money earned without active work\n• **Tax deduction** — expenses that reduce your taxable income\n\n📌 The **50/30/20 rule**: 50% needs · 30% wants · 20% savings & investments",t:"La finanza personale!"}
+  ]},
+  {tr:['startup','entrepreneurship','business','entrepreneur','founder','venture capital','pitch','mvp','lean','saas','monetize','product','customer','revenue','growth'],
+  rs:[
+    {m:"**Startup & Business English** 🚀\n\n• **Founder** — person who creates a startup\n• **MVP** — Minimum Viable Product (simplest working version)\n• **Pitch** — a presentation to convince investors\n• **Venture Capital (VC)** — firm that funds startups in exchange for equity\n• **Runway** — how many months of cash you have left\n• **Burn rate** — monthly spend\n• **Pivot** — changing your business direction\n• **Product-Market Fit** — your product solves a real problem people pay for\n• **Churn rate** — percentage of customers who leave\n• **CAC** — Customer Acquisition Cost\n• **LTV** — Lifetime Value of a customer\n• **Unicorn** 🦄 — startup valued over $1 billion\n\nPractice your pitch: *'My startup solves ___ for ___ by ___'*",t:"Il mondo delle startup!"}
+  ]},
+  {tr:['health','fitness','workout','gym','diet','nutrition','mental health','meditation','sleep','stress','anxiety','wellness','exercise','calories','protein','training'],
+  rs:[
+    {m:"**Health & Wellness** 🏋️ vocabulary:\n\n• **Cardio** — aerobic exercise that raises heart rate\n• **Strength training** — weightlifting to build muscle\n• **Reps & sets** — repetitions and groups of exercise\n• **Macros** — macronutrients: protein, carbohydrates, fats\n• **Deficit** — consuming fewer calories than you burn\n• **Recovery** — rest and repair after exercise\n• **Mindfulness** — paying attention to the present moment\n• **Burnout** — mental and physical exhaustion from overwork\n• **Cortisol** — the stress hormone\n• **Circadian rhythm** — your body's natural sleep/wake cycle\n\n💪 Try in English: *'I work out ___ times a week. My goal is ___'*",t:"Salute e fitness!"}
+  ]},
+  {tr:['science','physics','quantum','space','nasa','planet','galaxy','black hole','biology','dna','evolution','chemistry','climate change','global warming','research','experiment'],
+  rs:[
+    {m:"**Science vocabulary** 🔬🚀\n\n• **Hypothesis** — a testable prediction\n• **Peer review** — other scientists verify your research\n• **Quantum mechanics** — physics at the atomic/subatomic level\n• **Relativity** — Einstein's theory: space and time are relative\n• **DNA** — the molecule containing genetic information\n• **Evolution** — gradual change in species over generations\n• **Dark matter** — invisible mass that makes up ~27% of the universe\n• **Singularity** — a point of infinite density (e.g. black holes or technological AI)\n• **CRISPR** — gene-editing technology that could cure diseases\n\n🌌 **Mind-blowing fact**: there are more stars in the universe than grains of sand on Earth!\n\nWhat area of science fascinates you?",t:"La scienza!"}
+  ]},
+  {tr:['psychology','mind','behavior','cognitive','bias','emotion','self-improvement','habit','productivity','focus','motivation','procrastination','leadership','communication'],
+  rs:[
+    {m:"**Psychology & Self-Development** 🧠\n\n• **Cognitive bias** — a systematic error in thinking\n• **Growth mindset** — believing abilities can be developed\n• **Fixed mindset** — believing talents are innate and unchangeable\n• **Procrastination** — delaying tasks unnecessarily\n• **Deep work** — focused work without distractions\n• **Flow state** — complete immersion in a challenging task\n• **Habit loop** — cue → routine → reward\n• **Imposter syndrome** — feeling like a fraud despite your achievements\n• **Emotional intelligence (EQ)** — awareness and management of emotions\n\n📚 Famous books in English: *Atomic Habits* · *Thinking Fast and Slow* · *Deep Work*\n\nWhich of these applies to you?",t:"Psicologia e sviluppo personale!"}
+  ]},
+  {tr:['social media','instagram','tiktok','youtube','content','creator','influencer','viral','algorithm','engagement','podcast','streaming','netflix','marketing','brand','advertising'],
+  rs:[
+    {m:"**Digital Marketing & Content** 📱\n\n• **Content creator** — someone who produces digital content\n• **Engagement rate** — (likes+comments+shares) ÷ followers\n• **Organic reach** — views without paid promotion\n• **Algorithm** — the system that decides what you see\n• **Call to action (CTA)** — prompt urging users to act ('Subscribe now!')\n• **Conversion rate** — % of visitors who take a desired action\n• **SEO** — Search Engine Optimisation (rank higher on Google)\n• **ROI** — Return on Investment\n• **Niche** — a specific segment of an audience\n• **Personal brand** — your public image and reputation\n\n💡 All major platforms — Instagram, TikTok, YouTube — use English as their primary language for creators!",t:"Marketing e social media!"}
+  ]},
+  {tr:['travel','trip','vacation','holiday','hotel','flight','airport','visa','tourist','abroad','backpack','itinerary','culture','destination'],
+  rs:[
+    {m:"**Travel English** ✈️ — sentences you'll actually use:\n\n• *'I'd like to check in, please.'* — Vorrei fare il check-in\n• *'Is breakfast included?'* — La colazione è inclusa?\n• *'My flight has been delayed.'* — Il mio volo è in ritardo\n• *'Could you recommend a good restaurant?'* — Può consigliarmi un ristorante?\n• *'I seem to have lost my passport.'* — Sembra che abbia perso il passaporto\n• *'Is there a direct train to...?'* — C'è un treno diretto per...?\n• *'What time does it close?'* — A che ora chiude?\n• *'Can I pay by card?'* — Posso pagare con carta?\n\nWhere would you like to travel? Practice: *'My dream destination is ___ because ___'*",t:"L'inglese per i viaggi!"}
+  ]},
+  {tr:['art','music','film','movie','book','literature','history','museum','architecture','design','fashion','cinema','creativity','culture','painting','novel'],
+  rs:[
+    {m:"**Arts & Culture** 🎨🎬\n\n• **Exhibition** — a public display of artworks\n• **Plot** — the sequence of events in a story\n• **Protagonist** — the main character\n• **Antagonist** — the villain or opposing force\n• **Genre** — category: thriller, comedy, sci-fi, drama...\n• **Cinematography** — the art of film photography\n• **Soundtrack** — the music of a film\n• **Critique** — an analysis and evaluation of a work\n• **Masterpiece** — a work of outstanding quality\n• **Avant-garde** — experimental, ahead of its time\n\nDescribe your favourite film in English: *'It's a ___ film about ___. The best part is ___'*",t:"Arte e cultura!"}
+  ]},
+  {tr:['environment','climate','sustainability','renewable','solar','energy','pollution','carbon','green','eco','recycling','global warming','deforestation','biodiversity'],
+  rs:[
+    {m:"**Environment & Sustainability** 🌍\n\n• **Carbon footprint** — the CO₂ produced by your activities\n• **Net zero** — balancing emissions with carbon removal\n• **Renewable energy** — solar ☀️, wind 💨, hydro 💧\n• **Carbon offset** — compensating emissions by funding green projects\n• **Biodiversity** — variety of life on Earth\n• **Deforestation** — destroying forests for agriculture/development\n• **Greenwashing** — falsely claiming environmental responsibility\n• **ESG** — Environmental, Social, Governance (ethical investing)\n• **Circular economy** — designing out waste, keeping materials in use\n\n🌱 *'We do not inherit the Earth from our ancestors; we borrow it from our children.'*",t:"L'ambiente!"}
+  ]},
+  {tr:['sport','football','soccer','basketball','tennis','formula','athlete','championship','tournament','match','team','coach','olympics','serie a','premier league'],
+  rs:[
+    {m:"**Sports English** ⚽🏆\n\n• **Championship** — competition to determine the best\n• **Tournament** — a series of knockout matches\n• **Penalty** — punishment for breaking rules\n• **Transfer** — player moving to a new team (+ transfer fee)\n• **Tactics** — strategy and formation\n• **VAR** — Video Assistant Referee\n• **Clean sheet** — goalkeeper conceded zero goals\n• **Hat-trick** — three goals in one match\n• **Injury time / stoppage time** — extra time added\n• **Comeback** — recovering from a losing position\n\n💬 Try: *'My favourite team is ___ because ___. Their best player is ___'*",t:"Lo sport in inglese!"}
+  ]},
+];
+
+function detectTopic(txt){
+  const t=txt.toLowerCase();
+  for(const topic of TOPICS){
+    if(topic.tr.some(kw=>t.includes(kw)))return topic;
+  }
+  return null;
+}
+
+function isEnglish(txt){
+  const en=/\b(the|is|are|you|your|have|can|will|do|my|this|that|hello|great|good|well|i am|i'm|let|go|keep|try|what|how|when|where|why|who)\b/i;
+  return en.test(txt)&&txt.split(' ').length>2;
+}
+
+// ── COACH: FIELD PROFILING ────────────────────────────────────────────────────
+const FIELDS={
+  tech:{label:"Tech & IT",ic:"💻",kw:['developer','sviluppatore','programmatore','programmer','software','engineer','ingegnere','informatic','it ','devops','data scientist','frontend','backend','fullstack','sistemista','cyber','analyst','tecnico'],
+    lex:[["problem","bottleneck / edge case"],["make better","optimise / refactor"],["big system","distributed architecture"],["check","validate / audit"],["fast","performant / low-latency"]]},
+  business:{label:"Business & Management",ic:"📊",kw:['manager','consulente','consultant','sales','vendite','marketing','commerciale','imprenditore','entrepreneur','founder','business','ceo','account','hr','risorse umane','project manager','startup'],
+    lex:[["problem","challenge / roadblock"],["talk to","engage with / align with"],["money","revenue / capital outlay"],["plan","strategy / roadmap"],["good result","strong performance / uplift"]]},
+  finance:{label:"Finanza & Banking",ic:"💰",kw:['finanza','financial','bank','banca','contabil','account','commercialista','audit','revisore','invest','trader','broker','assicura','insurance','fiscal','tax','tesoreria'],
+    lex:[["money","capital / liquidity"],["profit","margin / return"],["risk","exposure / downside risk"],["go up","appreciate / rally"],["loss","impairment / write-down"]]},
+  medical:{label:"Sanità & Medicina",ic:"🏥",kw:['medico','doctor','dottore','nurse','infermier','healthcare','sanit','ospedale','hospital','clinic','farmac','pharma','dentist','fisioterap','psicolog','veterinar','paziente'],
+    lex:[["sick","symptomatic / presenting with"],["look at","assess / examine"],["get better","recover / respond to treatment"],["give medicine","administer / prescribe"],["problem","complication / adverse event"]]},
+  legal:{label:"Legale",ic:"⚖️",kw:['avvocato','lawyer','legal','giurid','notaio','notary','tribunal','court','contratt','contract','compliance','paraleg','magistrat','studio legale'],
+    lex:[["say","assert / contend"],["agreement","covenant / undertaking"],["break a rule","breach / contravene"],["proof","evidence / documentation"],["end a contract","terminate / rescind"]]},
+  academic:{label:"Studio & Ricerca",ic:"🎓",kw:['student','studente','studentessa','university','universit','ricerc','research','phd','dottorat','professor','insegnante','teacher','docente','tesi','thesis','scuola','school','esame','exam'],
+    lex:[["show","demonstrate / illustrate"],["think","posit / hypothesise"],["important","salient / pivotal"],["problem","limitation / confounding factor"],["use","employ / apply"]]},
+  hospitality:{label:"Turismo & Ristorazione",ic:"🍽️",kw:['chef','cuoco','cuoca','ristorant','restaurant','hotel','albergo','turismo','tourism','cameriere','waiter','barista','bar ','recept','viaggi','travel agent','catering'],
+    lex:[["food","cuisine / fare"],["good service","attentive service / hospitality"],["customer","guest / patron"],["make food","prepare / plate up"],["busy","fully booked / at capacity"]]},
+  creative:{label:"Creatività & Design",ic:"🎨",kw:['designer','design','grafic','ux','ui','architett','artist','fotograf','photograph','video','film','music','writer','copywriter','creativ','moda','fashion','content'],
+    lex:[["nice","striking / refined"],["idea","concept / creative direction"],["make","craft / execute"],["change","iterate / refine"],["style","aesthetic / visual language"]]},
+  general:{label:"Generale",ic:"🌍",kw:[],
+    lex:[["good","excellent / outstanding"],["bad","poor / subpar"],["big","substantial / considerable"],["very","remarkably / considerably"],["problem","issue / challenge"]]}
+};
+
+function detectField(txt){
+  const t=txt.toLowerCase();
+  for(const[id,f]of Object.entries(FIELDS)){
+    if(id==='general')continue;
+    if(f.kw.some(k=>t.includes(k)))return id;
+  }
+  return null;
+}
+function myField(){return FIELDS[profile.field]||FIELDS.general;}
+
+// ── COACH: ROLEPLAY SCENARIOS ─────────────────────────────────────────────────
+const ROLEPLAY={
+  tech:[
+    {t:"Technical stand-up",set:"Sei nella daily stand-up. Il tuo Tech Lead (io) ti chiede lo stato del lavoro.",role:"Tech Lead",
+     turns:["Morning. Quick update — what did you ship yesterday, and what's blocking you today?",
+            "Right. And how confident are you that this won't introduce a regression in production?",
+            "Fair. If the deploy fails at 2 a.m., walk me through your rollback plan.",
+            "Good. Last one: convince me in three sentences why we should prioritise this over the security backlog."]},
+    {t:"Client technical pitch",set:"Stai presentando la tua soluzione a un cliente tecnicamente competente ma scettico.",role:"CTO del cliente",
+     turns:["We've seen four vendors this month. In one minute — why is your architecture different?",
+            "Interesting. What happens to our data if your company is acquired tomorrow?",
+            "And your latency claims — how were they benchmarked, and under what load?",
+            "Final question: what's the single biggest weakness of your solution? Be honest."]},
+    {t:"Job interview — senior role",set:"Colloquio tecnico per una posizione senior in un'azienda internazionale.",role:"Hiring Manager",
+     turns:["Thanks for coming in. Tell me about the most complex system you've designed — and what you'd change now.",
+            "You mentioned trade-offs. Give me a concrete example where you chose the 'worse' technical option for a good reason.",
+            "How do you handle a disagreement with a colleague who is more senior but, in your view, wrong?",
+            "Last question: where do you want your career to be in three years, and what's stopping you today?"]}
+  ],
+  business:[
+    {t:"Quarterly client review",set:"Riunione trimestrale con un cliente insoddisfatto dei risultati.",role:"Cliente insoddisfatto",
+     turns:["Let's be direct — we're not seeing the ROI we were promised. What's your explanation?",
+            "That's context, not a solution. What specifically will change in the next 30 days?",
+            "And if it doesn't work? What's your accountability here?",
+            "Alright. Give me one reason we should renew rather than go to your competitor."]},
+    {t:"Investor pitch",set:"Hai 4 minuti davanti a un investitore per convincerlo a finanziare la tua idea.",role:"Venture Capitalist",
+     turns:["You've got my attention for four minutes. What problem are you solving, and for whom?",
+            "The market is crowded. What's your unfair advantage — something a competitor can't copy in six months?",
+            "Talk me through your unit economics. What's your CAC and your payback period?",
+            "Final question: what would make you walk away from this business entirely?"]},
+    {t:"Salary negotiation",set:"Stai negoziando un aumento con il tuo responsabile.",role:"Il tuo Manager",
+     turns:["You asked for this meeting. What's on your mind?",
+            "I hear you. But budgets are tight this year. Why you, specifically, and why now?",
+            "Let's say I can offer half of what you're asking. How do you respond?",
+            "Before we close — what would make you stay here for the next three years?"]}
+  ],
+  finance:[
+    {t:"Board financial review",set:"Presenti i risultati trimestrali al consiglio di amministrazione.",role:"Membro del Board",
+     turns:["Margins are down 3 points quarter on quarter. Walk me through the drivers.",
+            "Is that structural or cyclical? And what's your evidence?",
+            "What's your exposure if interest rates move another 75 basis points?",
+            "Final question: if you had to cut 15% of costs without touching headcount, where would you start?"]},
+    {t:"Client portfolio meeting",set:"Un cliente preoccupato per le perdite in portafoglio ti chiede spiegazioni.",role:"Cliente preoccupato",
+     turns:["I've lost 12% this year. Explain to me — in plain English — what went wrong.",
+            "You keep saying 'long term'. How long is long term, exactly?",
+            "What would have to happen for you to recommend I exit this position entirely?",
+            "Last thing: how are you compensated on my portfolio? Be precise."]},
+    {t:"Audit interview",set:"Un revisore esterno ti fa domande sui controlli interni.",role:"Revisore esterno",
+     turns:["Talk me through your reconciliation process for the month-end close.",
+            "Who has the authority to override a control, and how is that documented?",
+            "You had three material adjustments last year. What changed since then?",
+            "Finally — where do you think your process is still weakest? I'd rather hear it from you."]}
+  ],
+  medical:[
+    {t:"Patient consultation",set:"Un paziente internazionale ansioso viene da te per dei risultati.",role:"Paziente ansioso",
+     turns:["Doctor, I've been waiting two weeks for these results. Please — just tell me straight.",
+            "I don't understand the medical terms. Can you explain it as if I were a child?",
+            "What are my options, and what would you do if you were me?",
+            "Last question — what's the realistic worst case here? I need to plan."]},
+    {t:"Case presentation",set:"Presenti un caso clinico complesso ai colleghi in un meeting internazionale.",role:"Consultant senior",
+     turns:["Present the case: history, findings, and your working diagnosis. Be concise.",
+            "What's your differential? And what would rule each one out?",
+            "You've chosen that treatment path. Justify it against the current guidelines.",
+            "Final point: what would you have done differently in the first 24 hours?"]},
+    {t:"Breaking difficult news",set:"Devi comunicare una diagnosi difficile a un familiare.",role:"Familiare del paziente",
+     turns:["The nurse said you needed to speak with me. Is my mother going to be alright?",
+            "I don't want statistics. I want to know what happens next, day by day.",
+            "Is she in pain? And can she hear me when I talk to her?",
+            "What would you want, if this were your own mother?"]}
+  ],
+  legal:[
+    {t:"Contract negotiation",set:"Stai negoziando una clausola contrattuale con la controparte.",role:"Avvocato della controparte",
+     turns:["Clause 8.2 as drafted is unacceptable to my client. What's your position?",
+            "That's a very one-sided reading. What consideration are you offering in exchange?",
+            "And if we walk away today — what's your client's exposure?",
+            "Give me one concession you can make right now to keep this deal alive."]},
+    {t:"Client consultation",set:"Un cliente ti espone un problema legale complesso.",role:"Cliente",
+     turns:["I've received a letter threatening legal action. How worried should I be?",
+            "What are my realistic options, and what does each one cost me?",
+            "If we go to court, what's the honest probability we win?",
+            "Last question — what's the one thing I should absolutely not do right now?"]}
+  ],
+  academic:[
+    {t:"Thesis defence",set:"Stai discutendo la tua tesi davanti a una commissione internazionale.",role:"Esaminatore esterno",
+     turns:["Summarise your central argument in ninety seconds. Start now.",
+            "Your methodology has a clear limitation. Identify it yourself before I do.",
+            "How would your conclusions change if your key assumption were wrong?",
+            "Final question: what's the single most important question your research leaves unanswered?"]},
+    {t:"Academic conference Q&A",set:"Hai appena presentato un paper e ricevi domande dal pubblico.",role:"Ricercatore critico",
+     turns:["Thank you for the presentation. How do you address the selection bias in your sample?",
+            "But surely correlation here doesn't establish causation. What's your response?",
+            "A competing study reached the opposite conclusion. How do you reconcile that?",
+            "Last one: what would falsify your hypothesis?"]},
+    {t:"University oral exam",set:"Esame orale in inglese con un professore esigente.",role:"Professore",
+     turns:["Let's begin. Define the core concept of this course in your own words.",
+            "Now give me a concrete example — and explain why it fits your definition.",
+            "What's the main criticism of that theory, and do you find it convincing?",
+            "Finally: apply this to a real-world situation you've encountered."]}
+  ],
+  hospitality:[
+    {t:"Difficult guest complaint",set:"Un ospite furioso si lamenta alla reception.",role:"Ospite arrabbiato",
+     turns:["This is completely unacceptable. My room wasn't ready and no one apologised. What are you going to do?",
+            "A discount? I flew eleven hours for this. Is that really your best offer?",
+            "And how do I know this won't happen again tomorrow?",
+            "Convince me not to leave a one-star review tonight."]},
+    {t:"Menu presentation",set:"Presenti il menu degustazione a clienti internazionali esigenti.",role:"Cliente gastronomo",
+     turns:["Talk me through the tasting menu. What's the concept behind it?",
+            "I have a shellfish allergy. What can you actually adapt, and what can't you?",
+            "Which wine would you pair with the third course, and why that one?",
+            "Final question: what dish are you personally proudest of, and what makes it special?"]}
+  ],
+  creative:[
+    {t:"Design review",set:"Presenti il tuo concept a un cliente che non capisce le tue scelte.",role:"Cliente",
+     turns:["I'll be honest — I don't like it. Explain why you went in this direction.",
+            "My competitor's brand looks nothing like this. Shouldn't we stand out more?",
+            "How do you know this will actually work with our audience?",
+            "Last question: what would you change if budget were no object?"]},
+    {t:"Creative pitch",set:"Presenti una campagna a un board di marketing scettico.",role:"Marketing Director",
+     turns:["You've got five minutes. What's the big idea, and why now?",
+            "That's the concept. But what's the measurable business outcome?",
+            "How does this survive being cut down to a six-second format?",
+            "Final challenge: sell me the tagline in one sentence."]}
+  ],
+  general:[
+    {t:"Job interview",set:"Colloquio di lavoro in inglese con un selezionatore esigente.",role:"Selezionatore",
+     turns:["Tell me about yourself — but skip the CV. What actually drives you?",
+            "Describe a moment you failed. What did you genuinely learn?",
+            "Why should we choose you over someone with more experience?",
+            "Final question: what would your last manager say is your biggest weakness?"]},
+    {t:"Networking event",set:"Sei a un evento internazionale e devi presentarti a uno sconosciuto.",role:"Professionista sconosciuto",
+     turns:["Hi — I don't think we've met. What brings you here tonight?",
+            "That sounds interesting. What's the hardest part of what you do?",
+            "Have you worked internationally? How does it compare?",
+            "Before I go — what are you hoping to get out of this event?"]},
+    {t:"Customer service call",set:"Devi risolvere un problema con un servizio, al telefono, in inglese.",role:"Operatore poco collaborativo",
+     turns:["Thank you for calling. I'm afraid that request falls outside our standard policy. How can I help?",
+            "I understand your frustration, but the terms were clear at purchase. What are you asking for exactly?",
+            "I could escalate this, but it would take fourteen working days. Is that acceptable?",
+            "Before I close the ticket — is there anything else you'd like me to note?"]}
+  ]
+};
+function myScenarios(){return ROLEPLAY[profile.field]||ROLEPLAY.general;}
+
+// ── COACH: VOCABULARY ELEVATION ───────────────────────────────────────────────
+const ELEVATE={
+  "good":"excellent · outstanding · exemplary","bad":"poor · subpar · deficient",
+  "big":"substantial · considerable · significant","small":"modest · marginal · negligible",
+  "very":"remarkably · considerably · markedly","nice":"refined · impressive · compelling",
+  "a lot":"a great deal · substantially","things":"factors · elements · aspects",
+  "problem":"issue · challenge · impediment","get":"obtain · acquire · secure",
+  "make":"produce · generate · devise","do":"carry out · undertake · execute",
+  "help":"assist · facilitate · support","show":"demonstrate · illustrate · indicate",
+  "think":"consider · maintain · contend","want":"seek · aim to · intend to",
+  "need":"require · necessitate","tell":"inform · advise · notify",
+  "start":"commence · initiate · launch","end":"conclude · finalise · terminate",
+  "use":"utilise · employ · leverage","important":"crucial · pivotal · paramount",
+  "difficult":"challenging · demanding · onerous","easy":"straightforward · seamless",
+  "happy":"delighted · pleased · gratified","sad":"disheartened · dismayed",
+  "angry":"frustrated · aggrieved","tired":"exhausted · depleted",
+  "money":"funds · capital · resources","job":"role · position · remit",
+  "boss":"line manager · supervisor","talk":"discuss · address · engage"
+};
+function checkElevate(raw){
+  const t=' '+raw.toLowerCase().replace(/[.,!?;:]/g,' ')+' ';
+  const f=myField();
+  // Field-specific lexicon wins — that's the whole point of profiling
+  for(const[basic,better]of f.lex){
+    if(t.includes(' '+basic+' '))
+      return{word:basic,better,fieldHint:`Registro di ${f.ic} ${f.label}.`};
+  }
+  // Then the general elevation map
+  for(const[basic,better]of Object.entries(ELEVATE)){
+    if(t.includes(' '+basic+' '))return{word:basic,better,fieldHint:''};
+  }
+  return null;
+}
+
+// ── COACH: CHALLENGING QUESTIONS (80/20 rule) ─────────────────────────────────
+const QPOOL={
+  tech:["What's the most over-engineered thing you've ever built — and why did it happen?",
+        "If you had to justify your tech stack to a non-technical CEO, how would you do it?",
+        "Describe a bug that taught you something. What was the real root cause?",
+        "How would you explain your job to someone from 1980?"],
+  business:["What's a decision you made that looked right at the time and wrong six months later?",
+            "How do you measure whether your work actually created value?",
+            "If your budget were halved tomorrow, what would you protect first?",
+            "What's an industry assumption you think is completely wrong?"],
+  finance:["What's the most misunderstood concept in your field, and why does it matter?",
+           "How do you explain risk to someone who only sees returns?",
+           "Describe a time the numbers told a different story than the narrative.",
+           "What would you never invest in, no matter the return?"],
+  medical:["How do you explain a complex diagnosis without frightening the patient?",
+           "What's the hardest conversation you've had to have in your work?",
+           "How has your field changed most in the last five years?",
+           "What do patients most often misunderstand about your speciality?"],
+  legal:["How do you argue a position you personally disagree with?",
+         "What's the most commonly misunderstood clause in your practice area?",
+         "Describe a negotiation where the turning point surprised you.",
+         "Where does the law lag behind reality in your field?"],
+  academic:["What's the weakest part of your own argument — and how do you defend it?",
+            "How would you explain your research to a curious fifteen-year-old?",
+            "What finding in your field genuinely surprised you?",
+            "If your thesis were disproven tomorrow, what would still stand?"],
+  hospitality:["What separates good service from unforgettable service?",
+               "Describe the most difficult guest you've handled. What worked?",
+               "How do you keep standards high on the busiest night of the year?",
+               "What's a detail guests never notice but you obsess over?"],
+  creative:["How do you defend a creative decision when the client hates it?",
+            "What's the difference between work you're proud of and work that performs?",
+            "Where do your ideas actually come from — describe the process.",
+            "What's a trend in your field you refuse to follow, and why?"],
+  general:["What's something you believe that most people around you disagree with?",
+           "Describe a moment that changed how you see your work.",
+           "If you could master one skill instantly, what would it be — and why that one?",
+           "What's the hardest thing about learning English for an Italian speaker, in your experience?"]
+};
+function challengeQ(){
+  const pool=QPOOL[profile.field]||QPOOL.general;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+// The 80/20 rule: every Luna turn must end with an open question.
+// Strip HTML *and* markdown emphasis before testing — "…?**" still ends in a question.
+function ensureQuestion(msg){
+  const plain=msg.replace(/<[^>]+>/g,'').replace(/[*_`~]/g,'').trim();
+  if(/\?\s*$/.test(plain))return msg;
+  return msg+`\n\n💬 **${challengeQ()}**`;
+}
+
+// ── COACH: ROLEPLAY ENGINE ────────────────────────────────────────────────────
+let rp=null; // {sc, step}
+function startRoleplay(idx){
+  const list=myScenarios();
+  const sc=list[idx]||list[0];
+  rp={sc,step:0};
+  switchTab('chat',document.querySelector('.tab[onclick*="chat"]'));
+  addMsg(`🎬 **ROLEPLAY: ${sc.t}**\n\n*${sc.set}*\n\n🎭 Io sono: **${sc.role}**. Rispondi solo in inglese — correggo ogni errore.\n\n_Scrivi **stop** per uscire._`,'luna','Roleplay iniziato!',false);
+  setTimeout(()=>addMsg(`**${sc.role}:** "${sc.turns[0]}"`,'luna','',true,null),900);
+  setBubble(`🎬 ${sc.t}`);
+}
+function rpNext(){
+  rp.step++;
+  if(rp.step>=rp.sc.turns.length){
+    const done=rp.sc.t;rp=null;
+    return{m:`🎬 **Scenario completato: ${done}** ✅\n\nHai retto un'intera conversazione professionale in inglese. Questo è esattamente il tipo di pratica che sposta il livello.\n\n📊 Vuoi rifarlo con uno scenario più difficile, o preferisci che analizziamo gli errori ricorrenti?`,t:'Scenario completato!',spk:"Scenario complete. Well handled."};
+  }
+  const line=rp.sc.turns[rp.step];
+  return{m:`**${rp.sc.role}:** "${line}"`,t:'',spk:line};
+}
+function stopRoleplay(){
+  const t=rp?rp.sc.t:'';rp=null;
+  return{m:`🎬 Roleplay interrotto${t?` (*${t}*)`:''}.\n\nTorniamo alla conversazione libera. ${challengeQ()}`,t:'Roleplay terminato'};
+}
+
+// STATE
+const LEVELS=['a1','a2','b1','b2','c1','c2'];
+const LEVEL_NAME={a1:'A1 · Principiante',a2:'A2 · Elementare',b1:'B1 · Intermedio',b2:'B2 · Intermedio alto',c1:'C1 · Avanzato',c2:'C2 · Padronanza'};
+let level=localStorage.getItem('luna_level')||'a1';
+if(!LEVELS.includes(level))level='a1';
+let qIdx=0,score=0,answered=false,talking=false;
+let xp=parseInt(localStorage.getItem('luna_xp')||'0');
+let profile=JSON.parse(localStorage.getItem('luna_profile')||'{}');
+let wordBank=JSON.parse(localStorage.getItem('luna_words')||'[]');
+
+function saveProfile(){localStorage.setItem('luna_profile',JSON.stringify(profile))}
+function saveWordBank(){localStorage.setItem('luna_words',JSON.stringify(wordBank))}
+function saveWord(en,it,ctx='chat'){
+  const key=en.toLowerCase().split('/')[0].trim();
+  if(wordBank.some(w=>w.en.toLowerCase()===key))return;
+  wordBank.unshift({en:key,it,ctx,date:new Date().toLocaleDateString('it-IT'),id:Date.now()});
+  if(wordBank.length>300)wordBank.pop();
+  saveWordBank();
+}
+function updateStreak(){
+  const today=new Date().toDateString();
+  if(profile.lastSeen===today)return;
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  profile.streak=(profile.lastSeen===yesterday)?(profile.streak||0)+1:1;
+  profile.sessions=(profile.sessions||0)+1;profile.lastSeen=today;saveProfile();
+}
+function detectProfile(txt){
+  if(!profile.name){const m=txt.match(/(?:mi chiamo|sono|chiamami|name is|i'm|i am|call me)\s+([A-Za-zÀ-ÿ]{2,20})/i);if(m){profile.name=m[1].charAt(0).toUpperCase()+m[1].slice(1).toLowerCase();saveProfile();}}
+  if(!profile.job){const jobs={'developer|sviluppatore|programmatore|frontend|backend|fullstack|software':'Developer 💻','consulente|consultant|sap|erp|manager':'Consultant 📊','designer|ux|ui|grafico':'Designer 🎨','studente|student':'Student 🎓','medico|dottore|doctor':'Healthcare 🏥','insegnante|teacher|professore':'Teacher 📚','chef|cuoco|cucina':'Chef 👨‍🍳'};for(const[p,j]of Object.entries(jobs)){if(new RegExp(p,'i').test(txt)){profile.job=j;saveProfile();break;}}}
+}
+
+// XP
+function addXP(n,x,y){
+  xp+=n;localStorage.setItem('luna_xp',xp);updateXP();
+  const p=document.createElement('div');p.className='xp-pop';p.textContent=`+${n} XP`;p.style.cssText=`left:${x}px;top:${y}px`;document.body.appendChild(p);setTimeout(()=>p.remove(),1200);
+}
+function updateXP(){const f=Math.min((xp%100)/100*100,100);document.getElementById('xpFill').style.width=f+'%';document.getElementById('xpTxt').textContent=xp+' XP';}
+
+// SOUND
+function playCorrect(){try{const ac=new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type='sine';o.frequency.setValueAtTime(523,ac.currentTime);o.frequency.setValueAtTime(659,ac.currentTime+.1);o.frequency.setValueAtTime(784,ac.currentTime+.2);g.gain.setValueAtTime(.18,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.5);o.start();o.stop(ac.currentTime+.5);}catch(e){}}
+
+// ── VOICE SYSTEM ─────────────────────────────────────────────────────────────
+let voiceAccent='en-GB', voicePersonality='teacher', autoSpeak=true, isSpeaking=false, mouthIv=null;
+const PERS={teacher:{rate:.82,pitch:1.06,vol:.90},friend:{rate:.96,pitch:1.12,vol:.92},energy:{rate:1.12,pitch:1.20,vol:.95}};
+
+// Voice cache — populated once voices load
+let _voices=[];
+function loadVoices(){_voices=speechSynthesis.getVoices();}
+if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.addEventListener('voiceschanged',loadVoices);
+setTimeout(loadVoices,200);
+
+function getVoice(lang){
+  const vs=_voices.length?_voices:speechSynthesis.getVoices();
+  const target=lang||voiceAccent;
+  if(target==='it-IT'){
+    // Prefer female Italian voices: Elsa, Alice, Paola, Google
+    return vs.find(v=>v.lang==='it-IT'&&/elsa|alice|paola|bianca|google.*it|italian.*female/i.test(v.name))
+      ||vs.find(v=>v.lang==='it-IT'&&!/cosimo|luca|marco|roberto|male/i.test(v.name))
+      ||vs.find(v=>v.lang==='it-IT')
+      ||vs.find(v=>v.lang.startsWith('it'));
+  }
+  // English: prioritise Google UK/US female, then named females
+  const enTarget=target==='en-GB'?'en-GB':'en-US';
+  return vs.find(v=>v.lang===enTarget&&/google/i.test(v.name))
+    ||vs.find(v=>v.lang===enTarget&&/female|samantha|karen|victoria|hazel|kate|serena|zira|moira|fiona/i.test(v.name))
+    ||vs.find(v=>v.lang===enTarget)
+    ||vs.find(v=>v.lang.startsWith('en')&&/google/i.test(v.name))
+    ||vs.find(v=>v.lang.startsWith('en'));
+}
+function detectEmotion(t){
+  if(/!{2,}|amazing|excellent|perfect|bravo|superb/i.test(t))return{rM:.07,pM:.14};
+  if(/remember|note:|means|grammar|tense/i.test(t))return{rM:-.06,pM:-.07};
+  return{rM:0,pM:0};
+}
+function detectLang(text){
+  const t=text.toLowerCase();
+  // Italian function words / patterns
+  const itHits=(t.match(/\b(sono|siamo|questa|questo|ciao|grazie|per|con|del|della|non|hai|bene|oggi|anche|tutti|tutto|quando|come|dove|cosa|impara|scrivi|usa|guadagna|continua|bentornata|bentornato|costruisci|pronto|vuoi|puoi|così|però|già|ogni|questa)\b/g)||[]).length;
+  // English function words / patterns
+  const enHits=(t.match(/\b(the|you|your|hello|great|well|done|good|excellent|perfect|try|keep|go|let|can|will|do|my|this|that|have|is|are|be|it|said|means|practice|spoken|word|sentence|english)\b/g)||[]).length;
+  return itHits>enHits?'it-IT':null;
+}
+function lunaSpeak(rawText, forceLang){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const clean=rawText
+    .replace(/<[^>]+>/g,'')
+    .replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,' ')
+    .replace(/[*_`•→❌✅]/g,' ')
+    .replace(/\n+/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+  if(!clean||clean.length<2)return;
+  // forceLang===undefined → auto-detect; forceLang===null → force English; forceLang==='it-IT' → force Italian
+  const lang=forceLang!==undefined?forceLang:(detectLang(clean)||voiceAccent);
+  const p=PERS[voicePersonality]||PERS.teacher,e=detectEmotion(clean);
+  // Split into sentences so Chrome doesn't cut off long responses
+  const chunks=(clean.match(/[^.!?]+[.!?]+\s*/g)||[clean]).filter(s=>s.trim().length>1);
+  if(!chunks.length)return;
+  let idx=0;
+  const az=document.querySelector('.avatar-zone');
+  function speakChunk(){
+    if(idx>=chunks.length){isSpeaking=false;az&&az.classList.remove('is-speaking');stopSyncMouth();return;}
+    const chunk=chunks[idx++].trim();
+    if(!chunk){speakChunk();return;}
+    const u=new SpeechSynthesisUtterance(chunk);
+    u.lang=lang||voiceAccent;
+    if(lang==='it-IT'){u.rate=.87;u.pitch=1.1;u.volume=.93;}
+    else{u.rate=Math.max(.5,Math.min(1.6,p.rate+e.rM));u.pitch=Math.max(.5,Math.min(2,p.pitch+e.pM));u.volume=p.vol;}
+    const v=getVoice(lang);if(v)u.voice=v;
+    if(idx===1){u.onstart=()=>{isSpeaking=true;az&&az.classList.add('is-speaking');startSyncMouth();};}
+    u.onend=speakChunk;
+    u.onerror=()=>{speakChunk();};
+    u.onboundary=ev=>{if(ev.name==='word')flashMouth();};
+    speechSynthesis.speak(u);
+  }
+  speakChunk();
+}
+function say(t,lang){lunaSpeak(t,lang);}
+
+// Mouth sync
+function startSyncMouth(){
+  stopSyncMouth();
+  const m=document.getElementById('mouth');if(!m)return;
+  let open=false;
+  mouthIv=setInterval(()=>{
+    if(!isSpeaking){stopSyncMouth();return;}
+    open=!open;m.setAttribute('d',open?'M63 116 Q80 133 97 116':'M63 116 Q80 120 97 116');
+  },110);
+}
+function flashMouth(){
+  const m=document.getElementById('mouth');if(!m)return;
+  m.setAttribute('d','M63 116 Q80 135 97 116');
+  setTimeout(()=>{if(m&&isSpeaking)m.setAttribute('d','M63 116 Q80 119 97 116');},80);
+}
+function stopSyncMouth(){
+  if(mouthIv){clearInterval(mouthIv);mouthIv=null;}
+  const m=document.getElementById('mouth');if(m)m.setAttribute('d','M63 116 Q80 129 97 116');
+  talking=false;
+}
+
+// Voice controls
+function setPersonality(p,btn){
+  voicePersonality=p;
+  document.querySelectorAll('.vpill').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+}
+function toggleAccent(){
+  voiceAccent=voiceAccent==='en-GB'?'en-US':'en-GB';
+  const b=document.getElementById('vacc-btn');b.textContent=voiceAccent==='en-GB'?'🇬🇧':'🇺🇸';
+  b.className=voiceAccent==='en-GB'?'vacc gb':'vacc';
+}
+function toggleAutoSpeak(){autoSpeak=!autoSpeak;document.getElementById('autoSpkBtn').classList.toggle('on',autoSpeak);}
+
+// Legacy startTalk kept for quiz feedback
+function startTalk(ms=2000){
+  if(talking)return;talking=true;
+  const m=document.getElementById('mouth');let open=false;
+  const iv=setInterval(()=>{open=!open;m.setAttribute('d',open?'M63 116 Q80 131 97 116':'M63 116 Q80 122 97 116')},150);
+  setTimeout(()=>{clearInterval(iv);m.setAttribute('d','M63 116 Q80 129 97 116');talking=false},ms);
+}
+
+// Echo pronunciation practice
+function echoPhrase(phrase,btn){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){addMsg('Usa <strong>Google Chrome</strong> per la pratica vocale! 🎤','luna');return;}
+  btn.disabled=true;btn.textContent='🔊 Ascolta…';
+  lunaSpeak(phrase);
+  const delay=Math.max(1800,phrase.split(' ').length*480);
+  setTimeout(()=>{
+    btn.textContent='🎤 Parla ora!';
+    const rec=new SR();rec.lang='en-US';rec.continuous=false;rec.interimResults=false;
+    rec.onresult=ev=>{
+      const spoken=ev.results[0][0].transcript.toLowerCase().trim();
+      const target=phrase.toLowerCase().trim();
+      const score=wordSimilarity(spoken,target);
+      btn.disabled=false;btn.textContent='🎤 Ripeti!';
+      const prev=btn.parentElement.querySelector('.echo-result');if(prev)prev.remove();
+      const r=document.createElement('div');r.className='echo-result';
+      if(score>=.8){r.className+=' good';r.textContent=`✓ ${Math.round(score*100)}% — Perfetto!`;addXP(15,window.innerWidth/2,80);}
+      else if(score>=.45){r.className+=' ok';r.textContent=`≈ ${Math.round(score*100)}% — Quasi!`;addXP(5,window.innerWidth/2,80);}
+      else{r.className+=' try';r.textContent=`✗ Riprova! Dì: "${phrase}"`;}
+      btn.parentElement.appendChild(r);setTimeout(()=>r.remove(),4500);
+    };
+    rec.onerror=()=>{btn.disabled=false;btn.textContent='🎤 Ripeti!';};
+    try{rec.start();}catch(e){btn.disabled=false;btn.textContent='🎤 Ripeti!';}
+  },delay);
+}
+function wordSimilarity(a,b){
+  const wa=a.split(/\s+/),wb=b.split(/\s+/);
+  const ok=wa.filter(w=>wb.includes(w)).length;
+  return ok/Math.max(wa.length,wb.length);
+}
+
+// Vocab sub-tabs
+function switchVocabTab(tab,btn){
+  document.querySelectorAll('#vocabStabs .stab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  document.querySelectorAll('.stab-panel').forEach(p=>p.classList.remove('active'));
+  if(tab==='words'){document.getElementById('vc').classList.add('active');buildVocab();}
+  else if(tab==='grammar'){document.getElementById('vgrammar').classList.add('active');buildGrammar();}
+  else if(tab==='phrasal'){document.getElementById('vphrasa').classList.add('active');buildPhrasal();}
+}
+// ─────────────────────────────────────────────────────────────────────────────
+function setBubble(t){document.getElementById('bubble').innerHTML=t}
+
+// TABS
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  if(btn&&btn.classList.contains('tab')){btn.classList.add('on');movePill(btn);}
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-'+tab).classList.add('active');
+  const b={chat:"Let's practice! 💬",vocab:"New words! 📚 Click 🔊!",roleplay:"Real scenarios! 🎬",phrases:"Listen & repeat! 🗣️",exercises:"Quiz time! ✨",progress:"I tuoi progressi! 📈"};
+  setBubble(b[tab]||b.chat);
+  if(tab==='vocab')buildVocab();
+  if(tab==='roleplay')buildRoleplay();
+  if(tab==='phrases')buildPhrases();
+  if(tab==='exercises'){qIdx=0;score=0;updateScore();buildQuiz();}
+  if(tab==='progress')buildProgress();
+}
+function setLevel(lv,btn){
+  level=lv;localStorage.setItem('luna_level',lv);
+  document.querySelectorAll('.lvl-btn').forEach(b=>b.classList.toggle('on',b.dataset.lv===lv));
+  buildVocab();buildPhrases();buildGrammar();buildPhrasal();qIdx=0;score=0;updateScore();buildQuiz();
+  setBubble(`Level: ${LEVEL_NAME[lv]}`);
+}
+function syncLevelBtns(){document.querySelectorAll('.lvl-btn').forEach(b=>b.classList.toggle('on',b.dataset.lv===level));}
+
+// PHONETICS (Italian-speaker approximations)
+const PHON={"house":"/hàus/","room":"/rùm/","kitchen":"/kìtchin/","bedroom":"/bèdrum/","bathroom":"/bàthrum/","door":"/dòr/","window":"/uìndou/","garden":"/gàrden/","apple":"/àpol/","bread":"/brèd/","water":"/uòter/","milk":"/mìlk/","coffee":"/còfi/","meat":"/miit/","fish":"/fìsh/","pizza":"/pìtsa/","red":"/rèd/","blue":"/blù/","green":"/grìin/","yellow":"/jèlou/","black":"/blàk/","white":"/uàit/","orange":"/òrinj/","purple":"/pèrpol/","mother":"/màder/","father":"/fàder/","sister":"/sìster/","brother":"/bràder/","grandmother":"/grànd·màder/","grandfather":"/grànd·fàder/","friend":"/frènd/","child":"/tshàild/","one":"/uàn/","two":"/tù/","three":"/thrìi/","four":"/fòr/","five":"/fàiv/","ten":"/tèn/","twenty":"/tuènti/","hundred":"/hàndred/","meeting":"/mìiting/","deadline":"/dèd·làin/","colleague":"/còlìig/","manager":"/mànijer/","project":"/pròdjekt/","schedule":"/skèdjul/","salary":"/sàleri/","report":"/ripòrt/","passport":"/pàsport/","luggage":"/làgidj/","departure":"/dipàrtcher/","arrival":"/eràivel/","reservation":"/rèzervèishon/","customs":"/càstomz/","delay":"/dilèi/","headache":"/hèd·eik/","fever":"/fìiver/","medicine":"/mèdisin/","appointment":"/epòintment/","prescription":"/priskrìpshon/","symptoms":"/sìmptomz/","allergy":"/àlerji/","pharmacy":"/fàrmesi/","happy":"/hàpi/","sad":"/sàd/","angry":"/ànghri/","excited":"/eksàited/","worried":"/uàrrid/","proud":"/pràud/","disappointed":"/dìsepòinted/","relieved":"/rilìivd/","stakeholder":"/stèik·houlder/","revenue":"/rèvinju/","benchmark":"/bènchmark/","scalable":"/skèilabol/","hypothesis":"/haipòthesis/","methodology":"/methòdoloji/","paradigm":"/pàredaim/","nuance":"/njùans/"};
+
+// Word emojis — covers all levels
+const WICON={"house":"🏠","room":"🛋️","kitchen":"🍳","bedroom":"🛏️","bathroom":"🛁","door":"🚪","window":"🪟","garden":"🌿","apple":"🍎","bread":"🍞","water":"💧","milk":"🥛","coffee":"☕","meat":"🥩","fish":"🐟","pizza":"🍕","red":"❤️","blue":"💙","green":"💚","yellow":"💛","black":"🖤","white":"🤍","orange":"🧡","purple":"💜","Monday":"📅","Tuesday":"📅","Wednesday":"📅","Thursday":"📅","Friday":"🎉","Saturday":"✨","Sunday":"☀️","today":"📆","mother":"👩","father":"👨","sister":"👧","brother":"👦","grandmother":"👵","grandfather":"👴","friend":"🤝","child":"🧒","one":"1️⃣","two":"2️⃣","three":"3️⃣","four":"4️⃣","five":"5️⃣","ten":"🔟","twenty":"🔢","hundred":"💯","meeting":"📊","deadline":"⏰","colleague":"🤝","manager":"👔","project":"📋","schedule":"📆","salary":"💰","report":"📝","passport":"🛂","luggage":"🧳","departure":"✈️","arrival":"🛬","reservation":"🎫","boarding pass":"🎟️","customs":"🏛️","delay":"⏳","headache":"🤕","fever":"🌡️","medicine":"💊","appointment":"📅","prescription":"📋","symptoms":"😷","allergy":"🌸","pharmacy":"💊","happy":"😊","sad":"😢","angry":"😡","excited":"🤩","worried":"😰","proud":"🦁","disappointed":"😞","relieved":"😅","stakeholder":"🤝","revenue":"💹","acquisition":"🔗","leverage":"⚖️","benchmark":"📏","scalable":"📈","portfolio":"💼","synergy":"✨","hypothesis":"🧪","methodology":"📐","empirical":"🔬","paradigm":"🌀","dissertation":"📜","ambiguous":"❓","controversial":"⚠️","nuance":"🎨"};
+
+// VOCAB — horizontal card layout
+function buildVocab(){
+  const el=document.getElementById('vc');if(!el)return;el.innerHTML='';
+  (VOCAB[level]||VOCAB.a1).forEach(cat=>{
+    const d=document.createElement('div');d.className='vcat2';
+    const words=cat.words.map(w=>{
+      const esc=w.en.replace(/'/g,"\\'");
+      const key=w.en.toLowerCase();
+      const icon=WICON[w.en]||WICON[key]||'📝';
+      const phon=PHON[key]||'';
+      return `<div class="vword2" onclick="lunaSpeak('${esc}')"><div class="vw-icon">${icon}</div><div class="vw-info"><div class="vw-en">${w.en}</div>${phon?`<div class="vw-phon">${phon}</div>`:''}<div class="vw-it">${w.it}</div></div><button class="vw-spk" onclick="event.stopPropagation();lunaSpeak('${esc}')" title="Ascolta">🔊</button></div>`;
+    }).join('');
+    d.innerHTML=`<div class="vcat-h2">${cat.cat}<span class="cat-count">${cat.words.length} parole</span></div><div class="vwords2">${words}</div>`;
+    el.appendChild(d);
+  });
+}
+
+// GRAMMAR DATA
+const GRAMMAR={
+  a1:[
+    {title:"⏰ Tempi Principali",rows:[
+      {label:"Presente",ex:"I eat / She eats",it:"Mangio / Lei mangia"},
+      {label:"Passato",ex:"I ate / She ate",it:"Ho mangiato / Lei mangiò"},
+      {label:"Futuro",ex:"I will eat / She will eat",it:"Mangerò / Lei mangerà"},
+      {label:"Presente Cont.",ex:"I am eating / She is eating",it:"Sto mangiando"}
+    ]},
+    {title:"📌 Verbo 'To Be'",rows:[
+      {label:"I",ex:"I am (I'm)",it:"io sono"},
+      {label:"You",ex:"You are (You're)",it:"tu sei"},
+      {label:"He/She/It",ex:"He is (He's)",it:"lui/lei è"},
+      {label:"We/They",ex:"We are / They are",it:"noi/loro siamo"}
+    ]},
+    {title:"📝 Articoli",rows:[
+      {label:"A / An",ex:"a cat · an apple",it:"un, uno (prima volta)"},
+      {label:"The",ex:"the cat · the apple",it:"il/la/i/le (specifico)"},
+      {label:"Nessuno",ex:"I like music / I love coffee",it:"non si usa con cose in generale"}
+    ]}
+  ],
+  a2:[
+    {title:"📐 Comparativi & Superlativi",rows:[
+      {label:"Corti (+er)",ex:"big → bigger → the biggest",it:"grande → più grande → il più grande"},
+      {label:"Lunghi (more)",ex:"useful → more useful → the most useful",it:"utile → più utile → il più utile"},
+      {label:"Irregolari",ex:"good → better → best · bad → worse → worst",it:"mai 'more better'!"},
+      {label:"Uguaglianza",ex:"as tall as me",it:"alto quanto me"}
+    ]},
+    {title:"🔢 Countable & Uncountable",rows:[
+      {label:"Numerabili",ex:"How many books? · a few books",it:"si contano"},
+      {label:"Non numerabili",ex:"How much water? · a little water",it:"acqua, tempo, denaro, info"},
+      {label:"Entrambi",ex:"some / any / a lot of",it:"some in affermative, any in negative"}
+    ]},
+    {title:"📍 Preposizioni base",rows:[
+      {label:"Tempo",ex:"at 7 o'clock · on Monday · in June",it:"at ora · on giorno · in mese/anno"},
+      {label:"Luogo",ex:"at the station · on the table · in the room",it:"at punto · on superficie · in spazio"},
+      {label:"Movimento",ex:"to the shop · into the room",it:"verso / dentro"}
+    ]},
+    {title:"🗓️ Futuro: will vs going to",rows:[
+      {label:"will",ex:"I'll help you!",it:"decisione sul momento / promessa"},
+      {label:"going to",ex:"I'm going to study tonight",it:"piano già deciso"},
+      {label:"Present cont.",ex:"I'm meeting Ana at 6",it:"appuntamento fissato"}
+    ]}
+  ],
+  b1:[
+    {title:"🔄 Passivi",rows:[
+      {label:"Presente",ex:"The letter is written",it:"La lettera è scritta"},
+      {label:"Passato",ex:"The letter was written",it:"La lettera fu scritta"},
+      {label:"Futuro",ex:"The letter will be written",it:"La lettera sarà scritta"}
+    ]},
+    {title:"🤔 Condizionali",rows:[
+      {label:"0 — Verità",ex:"If you heat water, it boils",it:"Se scaldi l'acqua, bolle"},
+      {label:"1 — Reale",ex:"If it rains, I will stay",it:"Se piove, starò a casa"},
+      {label:"2 — Ipotetico",ex:"If I were rich, I would travel",it:"Se fossi ricco, viaggerei"}
+    ]},
+    {title:"📊 Presente Perfetto",rows:[
+      {label:"Forma",ex:"have/has + past participle",it:""},
+      {label:"Esperienza",ex:"I have been to Rome",it:"Sono stato a Roma"},
+      {label:"Recente",ex:"She has just left",it:"Lei è appena andata via"},
+      {label:"Durata",ex:"I have lived here for 5 years",it:"Abito qui da 5 anni"}
+    ]}
+  ],
+  b2:[
+    {title:"🕰️ Past Perfect",rows:[
+      {label:"Forma",ex:"had + past participle",it:""},
+      {label:"Uso",ex:"The meeting had ended before we arrived",it:"La riunione era finita prima che arrivassimo"},
+      {label:"Contrasto",ex:"I had studied English before I moved",it:"Avevo studiato inglese prima di trasferirmi"}
+    ]},
+    {title:"🎯 Gerundio vs Infinito",rows:[
+      {label:"+ -ing",ex:"enjoy · avoid · deny · suggest · consider",it:"I avoid making mistakes"},
+      {label:"+ to",ex:"decide · hope · refuse · manage · agree",it:"I decided to leave"},
+      {label:"Cambia senso",ex:"stop smoking ≠ stop to smoke",it:"smettere ≠ fermarsi per fumare"}
+    ]},
+    {title:"🔗 Relative Clauses",rows:[
+      {label:"Defining",ex:"The man who called is my boss",it:"senza virgole — essenziale"},
+      {label:"Non-defining",ex:"My boss, who is Italian, called",it:"con virgole — informazione extra"},
+      {label:"Whose",ex:"The project whose budget was cut",it:"il progetto il cui budget…"}
+    ]},
+    {title:"🎩 Registro & Cortesia",rows:[
+      {label:"Diretto",ex:"Send me the file",it:"informale / brusco"},
+      {label:"Neutro",ex:"Could you send me the file?",it:"standard professionale"},
+      {label:"Formale",ex:"I'd be grateful if you could send…",it:"email formale"}
+    ]}
+  ],
+  c1:[
+    {title:"✨ Congiuntivo",rows:[
+      {label:"Present Subj.",ex:"I insist that he be on time",it:"Insisto che sia puntuale"},
+      {label:"Past Subj.",ex:"If I were you, I would go",it:"Se fossi in te, andrei"},
+      {label:"Wish",ex:"I wish I knew the answer",it:"Vorrei sapere la risposta"}
+    ]},
+    {title:"🔀 Inversione",rows:[
+      {label:"No sooner",ex:"No sooner had I left than it rained",it:"Appena uscito, piovve"},
+      {label:"Hardly",ex:"Hardly had she sat down when…",it:"Si era a malapena seduta…"},
+      {label:"Not only",ex:"Not only did he lie, but also…",it:"Non solo mentì, ma anche…"}
+    ]},
+    {title:"🌀 Condizionale Misto",rows:[
+      {label:"Past → Present",ex:"If I had studied, I would be fluent now",it:"Se avessi studiato, ora sarei fluente"},
+      {label:"Present → Past",ex:"If I were braver, I would have asked",it:"Se fossi più coraggioso, avrei chiesto"},
+      {label:"Senza 'if'",ex:"Had I known, I would have helped",it:"inversione formale"}
+    ]},
+    {title:"⚖️ Modali del passato",rows:[
+      {label:"must have",ex:"He must have forgotten",it:"deve aver dimenticato (deduzione)"},
+      {label:"could have",ex:"You could have told me",it:"avresti potuto dirmelo (rimprovero)"},
+      {label:"should have",ex:"I should have known better",it:"avrei dovuto saperlo (rimpianto)"},
+      {label:"needn't have",ex:"You needn't have worried",it:"non era necessario preoccuparsi"}
+    ]}
+  ],
+  c2:[
+    {title:"🎭 Cleft Sentences",rows:[
+      {label:"It-cleft",ex:"It was the delay that ruined it",it:"enfasi sul soggetto"},
+      {label:"What-cleft",ex:"What we need is more time",it:"ciò di cui abbiamo bisogno…"},
+      {label:"All-cleft",ex:"All I want is clarity",it:"tutto ciò che voglio…"}
+    ]},
+    {title:"🪶 Hedging accademico",rows:[
+      {label:"Cautela",ex:"The data would appear to suggest…",it:"i dati sembrerebbero indicare"},
+      {label:"Distanza",ex:"It is widely held that…",it:"si ritiene comunemente che"},
+      {label:"Limite",ex:"insofar as the evidence permits",it:"nella misura in cui le prove lo consentono"}
+    ]},
+    {title:"🎩 Understatement & Ironia",rows:[
+      {label:"Litote",ex:"Not entirely without merit",it:"= piuttosto buono"},
+      {label:"Britannico",ex:"That's not ideal, I'm afraid",it:"= è un disastro"},
+      {label:"Concessivo",ex:"Be that as it may…",it:"sia come sia…"}
+    ]},
+    {title:"🧩 Nominalizzazione",rows:[
+      {label:"Verbo",ex:"They decided quickly",it:"registro neutro"},
+      {label:"Nome",ex:"Their swift decision…",it:"registro formale/accademico"},
+      {label:"Effetto",ex:"The implementation of the policy",it:"denso, impersonale, C2"}
+    ]}
+  ]
+};
+
+// PHRASAL VERBS DATA
+const PHRASAL={
+  a1:[
+    {v:"wake up",it:"svegliarsi",ex:"I wake up at 7 every day."},
+    {v:"get up",it:"alzarsi",ex:"I get up and make coffee."},
+    {v:"put on",it:"mettere (vestiti)",ex:"Put on your jacket, it's cold!"},
+    {v:"take off",it:"togliere / decollare",ex:"Take off your shoes at the door."},
+    {v:"turn on",it:"accendere",ex:"Turn on the TV, please."},
+    {v:"turn off",it:"spegnere",ex:"Turn off the lights when you leave."},
+    {v:"come in",it:"entrare",ex:"Come in! The door is open."},
+    {v:"go out",it:"uscire",ex:"Let's go out for dinner tonight."},
+    {v:"look for",it:"cercare",ex:"I'm looking for my keys."},
+    {v:"give up",it:"arrendersi / smettere",ex:"Never give up on your dreams!"}
+  ],
+  a2:[
+    {v:"get on",it:"salire (bus/treno)",ex:"Get on the bus at the next stop."},
+    {v:"get off",it:"scendere",ex:"We get off at the third station."},
+    {v:"pick up",it:"raccogliere / andare a prendere",ex:"I'll pick you up at eight."},
+    {v:"try on",it:"provare (vestiti)",ex:"Can I try on these shoes?"},
+    {v:"pay for",it:"pagare",ex:"Who is paying for dinner?"},
+    {v:"wait for",it:"aspettare",ex:"I'm waiting for the train."},
+    {v:"look after",it:"prendersi cura di",ex:"She looks after her little brother."},
+    {v:"find out",it:"scoprire",ex:"I want to find out the truth."},
+    {v:"put away",it:"mettere via",ex:"Put away your books, please."},
+    {v:"grow up",it:"crescere",ex:"I grew up in a small town."}
+  ],
+  b1:[
+    {v:"run out of",it:"esaurire / finire",ex:"We've run out of milk."},
+    {v:"look forward to",it:"non vedere l'ora",ex:"I look forward to meeting you."},
+    {v:"come up with",it:"inventare / trovare",ex:"She came up with a great idea."},
+    {v:"go through",it:"attraversare / esaminare",ex:"He went through a difficult time."},
+    {v:"bring up",it:"tirare fuori / allevare",ex:"Don't bring up politics at dinner."},
+    {v:"figure out",it:"capire / scoprire",ex:"I can't figure out this problem."},
+    {v:"set up",it:"organizzare / installare",ex:"Let's set up a meeting for Monday."},
+    {v:"deal with",it:"occuparsi di / gestire",ex:"How do you deal with stress?"}
+  ],
+  b2:[
+    {v:"follow up on",it:"dare seguito a",ex:"I'm following up on my last email."},
+    {v:"carry out",it:"eseguire / svolgere",ex:"We carried out a full audit."},
+    {v:"put forward",it:"proporre",ex:"She put forward an interesting proposal."},
+    {v:"rule out",it:"escludere",ex:"We can't rule out that option yet."},
+    {v:"come across as",it:"dare l'impressione di",ex:"He comes across as very confident."},
+    {v:"keep up with",it:"stare al passo con",ex:"It's hard to keep up with the changes."},
+    {v:"take on",it:"assumersi / assumere",ex:"We're taking on three new clients."},
+    {v:"cut back on",it:"ridurre",ex:"We need to cut back on spending."},
+    {v:"stand out",it:"distinguersi",ex:"Your CV really stands out."},
+    {v:"sort out",it:"risolvere / sistemare",ex:"Let's sort out the details tomorrow."}
+  ],
+  c1:[
+    {v:"account for",it:"spiegare / giustificare",ex:"How do you account for the delay?"},
+    {v:"back down",it:"cedere / ritirarsi",ex:"He refused to back down."},
+    {v:"fall through",it:"andare in fumo",ex:"The deal fell through at the last minute."},
+    {v:"get away with",it:"farla franca",ex:"You can't get away with lying."},
+    {v:"hold off",it:"rimandare / ritardare",ex:"Let's hold off the decision."},
+    {v:"lay off",it:"licenziare",ex:"The company laid off 200 workers."},
+    {v:"pull off",it:"riuscire in qualcosa",ex:"She pulled off an amazing comeback."},
+    {v:"work out",it:"funzionare / allenarsi",ex:"I hope this plan works out."}
+  ],
+  c2:[
+    {v:"gloss over",it:"sorvolare su",ex:"The report glosses over the real risks."},
+    {v:"water down",it:"annacquare / attenuare",ex:"The proposal was watered down considerably."},
+    {v:"pin down",it:"inchiodare / definire con precisione",ex:"It's hard to pin down the exact cause."},
+    {v:"bear out",it:"confermare",ex:"The findings bear out our hypothesis."},
+    {v:"weigh in on",it:"intervenire su",ex:"Several experts weighed in on the debate."},
+    {v:"square with",it:"conciliarsi con",ex:"That doesn't square with the evidence."},
+    {v:"tease out",it:"far emergere (con fatica)",ex:"We need to tease out the implications."},
+    {v:"brush aside",it:"liquidare / ignorare",ex:"He brushed aside every objection."},
+    {v:"hinge on",it:"dipendere interamente da",ex:"The whole case hinges on that clause."},
+    {v:"wind up",it:"finire per / concludere",ex:"We wound up rewriting the entire section."}
+  ]
+};
+
+function buildGrammar(){
+  const el=document.getElementById('vgrammar');el.innerHTML='';
+  (GRAMMAR[level]||GRAMMAR.a1).forEach(sec=>{
+    const d=document.createElement('div');d.className='grammar-card';
+    d.innerHTML=`<div class="grammar-h">${sec.title}</div><div class="grammar-body">${sec.rows.map(r=>`<div class="grammar-row"><span class="gr-label">${r.label}</span><span class="gr-ex">${r.ex}${r.it?`<br><span class="gr-it">${r.it}</span>`:''}</span></div>`).join('')}</div>`;
+    el.appendChild(d);
+  });
+}
+
+function buildPhrasal(){
+  const el=document.getElementById('vphrasa');el.innerHTML='';
+  (PHRASAL[level]||PHRASAL.a1).forEach(p=>{
+    const d=document.createElement('div');d.className='pv-item';
+    const esc=p.v.replace(/'/g,"\\'");
+    d.innerHTML=`<div class="pv-verb">${p.v} <button class="speak-btn" onclick="lunaSpeak('${esc}')">🔊</button></div><div class="pv-it">${p.it}</div><div class="pv-ex">"${p.ex}"</div>`;
+    el.appendChild(d);
+  });
+}
+
+// PHRASES
+function buildPhrases(){
+  const el=document.getElementById('pc');el.innerHTML='';
+  (PHRASES[level]||PHRASES.a1).forEach(p=>{
+    const d=document.createElement('div');d.className='ph-item';
+    const esc=p.en.replace(/'/g,"\\'");
+    d.innerHTML=`<div class="ph-en">"${p.en}" <button class="speak-btn" onclick="lunaSpeak('${esc}')">🔊</button></div><div class="ph-it">${p.it}</div><div class="ph-ctx">📌 ${p.ctx}</div><button class="echo-btn" onclick="echoPhrase('${esc}',this)">🎤 Ripeti!</button>`;
+    el.appendChild(d);
+  });
+}
+
+// QUIZ
+function updateScore(){
+  const data=QUIZ[level]||QUIZ.a1;
+  document.getElementById('qN').textContent=Math.min(qIdx+1,data.length);
+  document.getElementById('qT').textContent=data.length;
+  document.getElementById('qStars').textContent='⭐'.repeat(Math.min(score,5));
+  document.getElementById('qScore').textContent=score;
+}
+function buildQuiz(){
+  const el=document.getElementById('exc'),data=QUIZ[level]||QUIZ.a1;
+  if(qIdx>=data.length){
+    const pct=Math.round(score/data.length*100);
+    const e=pct===100?'🏆':pct>=70?'🌟':'💪';
+    const msg=pct===100?'Perfetto! Straordinario!':pct>=70?'Molto bene! Continua!':'Continua a praticare!';
+    el.innerHTML=`<div class="done-box"><span class="done-emoji">${e}</span><h3>Completato!</h3><span class="done-score">${score}/${data.length}</span><p>${msg}</p><button class="restart" onclick="qIdx=0;score=0;updateScore();buildQuiz()">Ricomincia 🔄</button></div>`;
+    return;
+  }
+  answered=false;const q=data[qIdx];const prog=(qIdx/data.length*100).toFixed(0);
+  el.innerHTML=`<div class="exbox"><div class="ex-prog"><div class="ex-prog-fill" style="width:${prog}%"></div></div><div class="exq"><span class="qnum">${qIdx+1}</span>${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt" onclick="checkAns(${i},${q.ok})">${o}</button>`).join('')}</div><button class="next-btn" id="nb" onclick="qIdx++;buildQuiz();updateScore()">Prossima →</button></div>`;
+}
+function checkAns(sel,ok){
+  if(answered)return;answered=true;
+  const btns=document.querySelectorAll('.opt');btns.forEach(b=>b.setAttribute('disabled',''));
+  btns[ok].classList.add('ok');
+  if(sel===ok){
+    score++;setBubble("Correct! 🎉 Excellent!");startTalk(1500);btns[ok].classList.add('flash');playCorrect();
+    const r=btns[ok].getBoundingClientRect();addXP(10,r.left+r.width/2,r.top);
+    const q=(QUIZ[level]||QUIZ.a1)[qIdx];if(q)saveWord(q.opts[ok],'-','quiz ✏️');
+  }else{btns[sel].classList.add('no');setBubble("Non è esatto 😊 Guarda la risposta verde.");startTalk(1200);}
+  updateScore();document.getElementById('nb').style.display='inline-block';
+}
+
+// CHAT
+function send(){
+  const inp=document.getElementById('inp'),txt=inp.value.trim();if(!txt)return;
+  addMsg(txt,'user');inp.value='';addXP(2,window.innerWidth/2,window.innerHeight*.8);
+  const row=document.createElement('div');row.className='msg-row luna typing-row';row.id='tp';
+  row.innerHTML='<div class="msg-av luna-av">L</div><div class="msg"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  document.getElementById('msgs').appendChild(row);scrollMsgs();
+  setTimeout(()=>{
+    document.getElementById('tp')?.remove();
+    const r=getReply(txt);
+    if(r.skip)return;
+    addMsg(r.m,'luna',r.t,true,r.lang,r.spk);startTalk();
+    setBubble(r.m.replace(/<[^>]+>/g,'').replace(/\*\*/g,'').substring(0,58)+(r.m.length>58?'…':''));
+  },700+Math.random()*500);
+}
+// ── LUNA COACH: main reply orchestrator ───────────────────────────────────────
+function getReply(rawTxt){
+  const txt=rawTxt.toLowerCase().trim();
+  detectProfile(txt);
+
+  // ── 0) ONBOARDING: profession, then goal (Dynamic Profiling) ────────────────
+  if(!profile.field){
+    const f=detectField(rawTxt);
+    if(f){
+      profile.field=f;saveProfile();
+      const F=FIELDS[f];
+      return{m:`${F.ic} **${F.label}** — perfetto, ora so con chi lavoro.\n\nDa adesso vocabolario, scenari e correzioni saranno tarati sul tuo settore.\n\n🎯 Ultima cosa: **qual è il tuo obiettivo?** Riunioni con clienti · email professionali · un esame · un colloquio · vivere all'estero?`,t:'Profilo impostato!',lang:'it-IT'};
+    }
+    if(profile.askedField){
+      // Free-text answer we couldn't classify → accept it as-is
+      profile.field='general';profile.fieldRaw=rawTxt.slice(0,60);saveProfile();
+      return{m:`Annotato: *"${rawTxt.slice(0,60)}"* 📌\n\n🎯 E **qual è il tuo obiettivo principale** con l'inglese? Riunioni · email · esame · colloquio · trasferirti all'estero?`,t:'Profilo salvato',lang:'it-IT'};
+    }
+  }
+  if(profile.field&&!profile.goal&&rawTxt.length>3&&!/^(si|sì|ok|no|ciao)$/i.test(txt)){
+    profile.goal=rawTxt.slice(0,80);saveProfile();
+    const F=myField();
+    const lex=F.lex.slice(0,3).map(p=>`• *${p[0]}* → **${p[1]}**`).join('\n');
+    return{m:`🎯 Obiettivo registrato: *"${profile.goal}"*\n\nEcco come lavoreremo — regole non negoziabili:\n\n1. **Correggo ogni errore**, sempre, subito\n2. **Alzo il tuo lessico** al registro professionale\n3. **Parli tu l'80%** del tempo, io il 20%\n4. **Roleplay realistici** del tuo settore — usa il tab 🎬\n\n📈 Primo upgrade lessicale per ${F.ic} ${F.label}:\n${lex}\n\nOra dimostrami dove sei. **Describe your typical working day in English** — don't translate, just write.`,t:'Iniziamo!',lang:'it-IT'};
+  }
+
+  // ── 1) ROLEPLAY MODE ────────────────────────────────────────────────────────
+  if(rp){
+    if(/^(stop|exit|esci|basta|quit)$/i.test(txt))return stopRoleplay();
+    const g=checkGrammar(rawTxt);
+    const nxt=rpNext();
+    if(g)return{m:`${g.m}\n\n───\n\n${nxt.m}`,t:'Correzione + scenario',spk:nxt.spk||g.spk};
+    const el=isEnglish(rawTxt)?checkElevate(rawTxt):null;
+    if(el)return{m:`📈 *"${el.word}"* → prova **${el.better}**\n\n───\n\n${nxt.m}`,t:'Upgrade lessicale',spk:nxt.spk};
+    return nxt;
+  }
+  if(/^(roleplay|scenario|simula|role play)/i.test(txt)){
+    const list=myScenarios();
+    return{m:`🎬 **Scenari per ${myField().ic} ${myField().label}**\n\n${list.map((s,i)=>`**${i+1}.** ${s.t} — *${s.set}*`).join('\n\n')}\n\nScrivi **1**, **2** o **3** per iniziare, oppure apri il tab 🎬 **Roleplay**.`,t:'Scegli uno scenario',lang:'it-IT'};
+  }
+  if(/^[123]$/.test(txt)&&myScenarios()[parseInt(txt)-1]){startRoleplay(parseInt(txt)-1);return{m:'',t:'',skip:true};}
+
+  // ── 2) ITALIAN WORD LOOKUP ──────────────────────────────────────────────────
+  for(const[k,v]of Object.entries(IT)){
+    if(txt.includes(k)){
+      saveWord(v.en.split('/')[0].trim(),k,'traduzione');
+      return{m:`"${k}" in English: <strong>"${v.en}"</strong> 🇬🇧\n\n${v.l}`,t:'Parola salvata! 📚',lang:'it-IT'};
+    }
+  }
+
+  // ── 3) RUTHLESS CORRECTION (highest priority on English) ────────────────────
+  if(isEnglish(rawTxt)){
+    const g=checkGrammar(rawTxt);
+    if(g)return{m:ensureQuestion(g.m),t:g.t,spk:g.spk};
+    // 4) VOCABULARY ELEVATION
+    const el=checkElevate(rawTxt);
+    if(el){
+      const m=`📈 **LEVEL UP**\nHai scritto *"${el.word}"* — corretto, ma da principiante.\n\n✨ Al tuo livello si dice: **${el.better}**\n${el.fieldHint?`\n🎯 ${el.fieldHint}`:''}\n\n**Come riscriveresti la frase usando il termine avanzato?**`;
+      return{m,t:'Alza il registro',spk:el.better.split(/[·\/]/)[0].trim()};
+    }
+  }
+
+  // ── 5) KNOWLEDGE BASE ───────────────────────────────────────────────────────
+  const topic=detectTopic(txt);
+  if(topic){
+    const r=topic.rs[Math.floor(Math.random()*topic.rs.length)];
+    return{m:ensureQuestion(r.m),t:r.t};
+  }
+
+  // ── 6) PHRASE SHORTCUTS ─────────────────────────────────────────────────────
+  for(const r of RS){
+    if(r.tr.some(t=>txt.includes(t))){
+      const pick=r.rs[Math.floor(Math.random()*r.rs.length)];
+      return{m:ensureQuestion(pick.m),t:pick.t};
+    }
+  }
+
+  // ── 7) VALID ENGLISH → push harder (80/20) ──────────────────────────────────
+  if(isEnglish(rawTxt)){
+    const F=myField();
+    const pool=[
+      `✅ Grammatically clean. But *clean* isn't *impressive*.\n\nPush it further: same idea, but use a **subordinate clause** and one ${F.ic} term from your field.`,
+      `✅ Correct. Now raise the register — that sentence would work in a text message, not in a ${F.label.toLowerCase()} meeting.\n\nRewrite it as if you were speaking to a client.`,
+      `✅ Understood perfectly. Now make it longer and more precise: add **why**, and add a **concrete example**.`
+    ];
+    return{m:ensureQuestion(pool[Math.floor(Math.random()*pool.length)]),t:'Spingi più in alto'};
+  }
+
+  // ── 8) FALLBACK — always ends with a challenge ──────────────────────────────
+  const d=DEF[Math.floor(Math.random()*DEF.length)];
+  return{m:ensureQuestion(d.m),t:d.t};
+}
+function addMsg(txt,who,tr='',speak=true,lang=undefined,spk=undefined){
+  const row=document.createElement('div');row.className=`msg-row ${who}`;
+  const av=document.createElement('div');av.className=`msg-av ${who==='luna'?'luna-av':'user-av'}`;av.textContent=who==='luna'?'L':'Tu';
+  const msg=document.createElement('div');msg.className='msg';
+  msg.innerHTML=txt.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  if(tr)msg.innerHTML+=`<div class="tr">🇮🇹 ${tr}</div>`;
+  row.appendChild(av);row.appendChild(msg);
+  document.getElementById('msgs').appendChild(row);scrollMsgs();
+  // spk = override text for TTS (e.g. speak only the English correction, not the Italian explanation)
+  if(who==='luna'&&autoSpeak&&speak)setTimeout(()=>lunaSpeak(spk||txt,lang),280);
+}
+function scrollMsgs(){const m=document.getElementById('msgs');m.scrollTop=m.scrollHeight;}
+
+// PROGRESS
+function buildProgress(){
+  const el=document.getElementById('progContent');if(!el)return;
+  const sessions=profile.sessions||0,streak=profile.streak||0,words=wordBank.length;
+  let profHTML=profile.name
+    ?`<div class="prof-card"><div class="prof-av">${profile.name.charAt(0)}</div><div class="prof-info"><div class="prof-name">${profile.name}${streak>=3?` <span class="streak-badge">🔥 ${streak}</span>`:''}</div><div class="prof-job">${profile.job||'Esploratore di lingue 🌍'}</div></div><button class="prof-edit" onclick="resetProfile()" title="Reset">✏️</button></div>`
+    :`<div class="onboard-box"><p>👋 Come ti chiami? Ti saluto con il tuo nome ad ogni sessione!</p><input class="onboard-inp" id="onbName" placeholder="Il tuo nome…"/><p style="margin-top:10px">E cosa fai?</p><input class="onboard-inp" id="onbJob" placeholder="La tua professione…"/><br><br><button class="onboard-btn" onclick="saveOnboardName()">Salva ✓</button></div>`;
+  const statsHTML=`<div class="stats-grid"><div class="stat-card"><div class="stat-n">${words}</div><div class="stat-l">Parole</div></div><div class="stat-card"><div class="stat-n">${xp}</div><div class="stat-l">XP</div></div><div class="stat-card"><div class="stat-n">${sessions}</div><div class="stat-l">Sessioni</div></div><div class="stat-card"><div class="stat-n">${streak}${streak>0?'🔥':''}</div><div class="stat-l">Streak</div></div></div>`;
+  let wbHTML=`<div class="wb-header"><span class="wb-title">📚 Vocabolario Personale</span>${wordBank.length?`<button class="wb-clear" onclick="clearWords()">Svuota</button>`:''}</div>`;
+  wbHTML+=!wordBank.length?`<div class="wb-empty">Nessuna parola ancora! 🌱<br>Scrivi parole italiane in chat.</div>`
+    :`<div class="wb-list">${wordBank.slice(0,60).map(w=>`<div class="wb-item"><div><div class="wb-en">${w.en}</div><div class="wb-it">${w.it}</div></div><div class="wb-right"><span class="wb-ctx">${w.ctx}</span><span class="wb-date">${w.date}</span><button class="wb-say" onclick="say('${w.en.replace(/'/g,"\\'")}')">🔊</button></div></div>`).join('')}${wordBank.length>60?`<div style="text-align:center;padding:8px;color:var(--muted);font-size:12px">+ altri ${wordBank.length-60}</div>`:''}</div>`;
+  el.innerHTML=profHTML+statsHTML+wbHTML;
+}
+function saveOnboardName(){
+  const n=document.getElementById('onbName')?.value.trim(),j=document.getElementById('onbJob')?.value.trim();
+  if(n)profile.name=n.charAt(0).toUpperCase()+n.slice(1).toLowerCase();
+  if(j)profile.job=j.charAt(0).toUpperCase()+j.slice(1);
+  saveProfile();buildProgress();
+  if(profile.name){addMsg(`Perfetto, <strong>${profile.name}</strong>! 🎉 Da ora ti chiamo per nome!`,'luna');switchTab('chat',document.getElementById('t-chat'));}
+}
+function resetProfile(){if(!confirm('Resettare il profilo? (nome, settore e obiettivo)'))return;profile={};saveProfile();rp=null;buildProgress();buildRoleplay();}
+function clearWords(){if(!confirm('Svuotare il vocabolario?'))return;wordBank=[];saveWordBank();buildProgress();}
+
+// MIC
+let recognition=null,isListening=false;
+function toggleMic(){
+  if(isListening){stopMic();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){addMsg("Usa <strong>Google Chrome</strong> per parlare con me! 🎤",'luna');return;}
+  recognition=new SR();recognition.lang='en-US';recognition.continuous=false;recognition.interimResults=true;
+  const inp=document.getElementById('inp'),btn=document.getElementById('micBtn');
+  isListening=true;btn.classList.add('mic-active');inp.classList.add('listening');inp.placeholder='Ti ascolto… 🎤';setBubble("Ti ascolto! 🎤<br><em>Parla in inglese…</em>");
+  recognition.onresult=e=>{const t=Array.from(e.results).map(r=>r[0].transcript).join('');inp.value=t;if(e.results[e.results.length-1].isFinal){stopMic();setTimeout(()=>send(),350);}};
+  recognition.onerror=e=>{stopMic();if(e.error==='not-allowed')addMsg("Microfono bloccato! Abilita il microfono nelle impostazioni del browser. 🎤",'luna');};
+  recognition.onend=()=>{if(isListening)stopMic();};
+  recognition.start();
+}
+function stopMic(){
+  isListening=false;document.getElementById('micBtn').classList.remove('mic-active');
+  const inp=document.getElementById('inp');inp.classList.remove('listening');inp.placeholder='Scrivi o parla in inglese…';
+  if(recognition){try{recognition.stop();}catch(e){}recognition=null;}
+}
+
+// ── WORD OF THE DAY ─────────────────────────────────────────────────────────
+const WOTD=[
+  {en:"serendipity",phon:"/sèrendi·piti/",it:"serendipità",ex:"Finding a great café by accident — that's serendipity!"},
+  {en:"resilience",phon:"/rizìliens/",it:"resilienza",ex:"She showed great resilience after losing her job."},
+  {en:"eloquent",phon:"/èlokuent/",it:"eloquente",ex:"His speech was so eloquent that everyone was moved."},
+  {en:"curious",phon:"/kjùeries/",it:"curioso",ex:"Stay curious — it's the key to learning languages!"},
+  {en:"ambitious",phon:"/embìshos/",it:"ambizioso",ex:"She is ambitious and works hard every day."},
+  {en:"grateful",phon:"/grèitfol/",it:"grato",ex:"I'm grateful for every lesson I learn."},
+  {en:"mindful",phon:"/màindfol/",it:"consapevole",ex:"Be mindful of how you speak — tone matters!"},
+  {en:"profound",phon:"/profàund/",it:"profondo",ex:"That was a profound and moving story."},
+  {en:"versatile",phon:"/vèrsatail/",it:"versatile",ex:"English is a versatile language used worldwide."},
+  {en:"enthusiasm",phon:"/enthùziezm/",it:"entusiasmo",ex:"Her enthusiasm for English is contagious!"},
+  {en:"milestone",phon:"/màilstoun/",it:"traguardo",ex:"Learning 100 words is a great milestone!"},
+  {en:"breakthrough",phon:"/brèik·thrù/",it:"svolta",ex:"Understanding a full conversation is a breakthrough."},
+  {en:"flourish",phon:"/flàrish/",it:"prosperare",ex:"Your English will flourish with daily practice."},
+  {en:"authentic",phon:"/othèntik/",it:"autentico",ex:"Speak in an authentic way — be yourself!"},
+  {en:"persevere",phon:"/pèrsivìr/",it:"perseverare",ex:"Persevere every day and you will succeed."}
+];
+
+function getDailyWord(){
+  const day=Math.floor(Date.now()/86400000);return WOTD[day%WOTD.length];
+}
+
+// ── WELCOME SCREEN ────────────────────────────────────────────────────────────
+const AV_SVG=`<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="wfg" cx="36%" cy="30%"><stop offset="0%" stop-color="#E0F0FF"/><stop offset="55%" stop-color="#B8D4FF"/><stop offset="100%" stop-color="#80B0E8"/></radialGradient></defs><circle cx="80" cy="80" r="62" fill="url(#wfg)"/><path d="M15 77 Q21 22 80 19 Q139 22 145 77 Q135 44 80 41 Q25 44 15 77Z" fill="#0F1830"/><ellipse cx="80" cy="93" rx="48" ry="54" fill="url(#wfg)"/><ellipse cx="30" cy="91" rx="9" ry="11" fill="#BEDAFF"/><ellipse cx="130" cy="91" rx="9" ry="11" fill="#BEDAFF"/><path d="M50 70 Q63 64 72 68" stroke="#0F1830" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M88 68 Q97 64 110 70" stroke="#0F1830" stroke-width="2.8" fill="none" stroke-linecap="round"/><ellipse cx="62" cy="83" rx="12.5" ry="13" fill="white"/><ellipse cx="62" cy="84" rx="8.5" ry="9" fill="#1C2F5A"/><circle cx="62" cy="83" r="4.8" fill="#040A1A"/><circle cx="65.5" cy="79.5" r="2.2" fill="white"/><ellipse cx="98" cy="83" rx="12.5" ry="13" fill="white"/><ellipse cx="98" cy="84" rx="8.5" ry="9" fill="#1C2F5A"/><circle cx="98" cy="83" r="4.8" fill="#040A1A"/><circle cx="101.5" cy="79.5" r="2.2" fill="white"/><path d="M63 116 Q80 129 97 116" stroke="#4080B8" stroke-width="2.8" fill="#A8CCEC" stroke-linecap="round"/></svg>`;
+
+function buildWelcome(){
+  const w=getDailyWord();
+  const hr=new Date().getHours();
+  const greet=hr<5?'Buona notte':hr<12?'Buongiorno':hr<18?'Buon pomeriggio':'Buonasera';
+  const esc=en=>en.replace(/'/g,"\\'");
+
+  const statsHtml=profile.name
+    ?`<div class="wc-stats">
+        <div class="wcs-pill"><div class="wcs-n">${xp}</div><div class="wcs-l">XP</div></div>
+        <div class="wcs-pill"><div class="wcs-n">${wordBank.length}</div><div class="wcs-l">Parole</div></div>
+        <div class="wcs-pill"><div class="wcs-n">${profile.streak||0}${(profile.streak||0)>=3?'🔥':''}</div><div class="wcs-l">Streak</div></div>
+        <div class="wcs-pill"><div class="wcs-n">${profile.sessions||0}</div><div class="wcs-l">Sessioni</div></div>
+      </div>`:'';
+
+  const recentHtml=profile.name&&wordBank.length
+    ?`<div class="wc-sec">Ultime parole apprese</div>
+       <div class="wc-recent">${wordBank.slice(0,8).map(ww=>`<span class="wc-recent-tag" onclick="say('${esc(ww.en)}')">🔊 ${ww.en}</span>`).join('')}</div>`
+    :'';
+
+  const nameHtml=!profile.name
+    ?`<div class="wc-name-row"><input class="wc-name-inp" id="wcNameInp" placeholder="Come ti chiami? (opzionale)" maxlength="20" onkeydown="if(event.key==='Enter')enterApp('chat')"/></div>`
+    :'';
+
+  const btnLabel=profile.name?`Continua con Luna ✦`:`Inizia a imparare →`;
+  const tipTxt=profile.name?`Sessione ${(profile.sessions||0)+1} · Continua così! 💪`:'Nessun account richiesto — inizia subito!';
+
+  document.getElementById('wc').innerHTML=`
+    <div class="wc-header">
+      <div class="wc-av"><div class="wc-av-glow"></div>${AV_SVG}</div>
+      <div class="wc-header-text">
+        <div class="wc-greeting">${greet}${profile.name?', <strong>'+profile.name+'</strong>':''} 👋</div>
+        <div class="wc-logo">LUNA ✦</div>
+        <div class="wc-sub">Il tuo tutor AI per l'inglese 🇬🇧</div>
+      </div>
+    </div>
+
+    ${statsHtml}
+
+    <div class="wc-sec">✨ Parola del Giorno</div>
+    <div class="wc-wotd" onclick="say('${esc(w.en)}')">
+      <div class="wotd-top">
+        <div class="wotd-label">Clicca per ascoltare</div>
+        <button class="wotd-listen" onclick="event.stopPropagation();say('${esc(w.en)}')">▶ Listen</button>
+      </div>
+      <div class="wotd-word">${w.en}</div>
+      <div class="wotd-phon">${w.phon}</div>
+      <div class="wotd-it">${w.it}</div>
+      <div class="wotd-ex">"${w.ex}"</div>
+    </div>
+
+    <div class="wc-sec">Dove vuoi andare?</div>
+    <div class="wc-grid">
+      <div class="wc-card cc" onclick="enterApp('chat')">
+        <span class="wc-card-arrow">→</span>
+        <div class="wc-card-ic">💬</div>
+        <div class="wc-card-title">Chat con Luna</div>
+        <div class="wc-card-desc">Parla, chiedi, correggi il tuo inglese</div>
+      </div>
+      <div class="wc-card cp" onclick="enterApp('roleplay')">
+        <span class="wc-card-arrow">→</span>
+        <div class="wc-card-ic">🎬</div>
+        <div class="wc-card-title">Roleplay</div>
+        <div class="wc-card-desc">Scenari reali del tuo settore</div>
+      </div>
+      <div class="wc-card cv" onclick="enterApp('vocab')">
+        <span class="wc-card-arrow">→</span>
+        <div class="wc-card-ic">📚</div>
+        <div class="wc-card-title">Vocabolario</div>
+        <div class="wc-card-desc">A1 → C2, pronuncia e audio</div>
+      </div>
+      <div class="wc-card cp" onclick="enterApp('phrases')">
+        <span class="wc-card-arrow">→</span>
+        <div class="wc-card-ic">🗣️</div>
+        <div class="wc-card-title">Frasi & Echo</div>
+        <div class="wc-card-desc">Ascolta e ripeti per la pronuncia perfetta</div>
+      </div>
+      <div class="wc-card cq" onclick="enterApp('exercises')">
+        <span class="wc-card-arrow">→</span>
+        <div class="wc-card-ic">✏️</div>
+        <div class="wc-card-title">Quiz</div>
+        <div class="wc-card-desc">Metti alla prova le tue conoscenze</div>
+      </div>
+    </div>
+
+    ${recentHtml}
+    ${nameHtml}
+
+    <button class="wc-btn" onclick="enterApp('chat')">${btnLabel}</button>
+    <div class="wc-tip">${tipTxt}</div>
+  `;
+}
+
+function enterApp(section){
+  section=section||'chat';
+  if(!profile.name){
+    const inp=document.getElementById('wcNameInp');
+    if(inp&&inp.value.trim()){
+      profile.name=inp.value.trim().charAt(0).toUpperCase()+inp.value.trim().slice(1).toLowerCase();
+      saveProfile();
+    }
+  }
+  document.getElementById('welcomeScreen').classList.add('out');
+  setTimeout(()=>{
+    startChat();
+    if(section!=='chat'){
+      switchTab(section,document.querySelector(`.tab[onclick*="'${section}'"]`));
+    }
+  },750);
+}
+
+function startChat(){
+  updateStreak();
+  const nm=profile.name?`, <strong>${profile.name}</strong>`:'';
+
+  // ── FIRST SESSION: Dynamic Profiling ─────────────────────────────────────
+  if(!profile.field){
+    addMsg(`Ciao${nm}! 👋 Sono <strong>Luna</strong> ✦ il tuo coach di inglese.`,'luna',"Hi, I'm Luna!",true,'it-IT');
+    startTalk(2000);
+    setTimeout(()=>{
+      profile.askedField=true;saveProfile();
+      addMsg("Non sono un chatbot generico: sono **esigente**, correggo **ogni** errore e ti porto da A1 a C2.\n\nMa prima devo sapere con chi lavoro.\n\n💼 **Che lavoro fai?** (o cosa studi)\n\nScrivilo pure in italiano — vocabolario, scenari e correzioni saranno tarati sul tuo settore reale.",'luna',"Tell me your job!",false);
+    },1500);
+    return;
+  }
+
+  // ── RETURNING USER ────────────────────────────────────────────────────────
+  const F=myField();
+  addMsg(`Bentornato/a${nm}! 👋 ${F.ic} <strong>${F.label}</strong> · Livello <strong>${LEVEL_NAME[level]}</strong>`,'luna','Welcome back!',true,'it-IT');
+  setBubble(`${F.ic} ${LEVEL_NAME[level]}`);
+  startTalk(2000);
+  setTimeout(()=>{
+    addMsg(`📊 ${wordBank.length} parole · ${xp} XP · streak ${profile.streak||0} 🔥\n\nDue modi per lavorare oggi:\n• 🎬 **Roleplay** — scenari reali del tuo settore\n• 💬 **Conversazione libera** — correggo tutto, sempre\n\n${challengeQ()}`,'luna','Ready?',true,null);
+  },1600);
+}
+
+// ── ROLEPLAY TAB ──────────────────────────────────────────────────────────────
+function buildRoleplay(){
+  const el=document.getElementById('rpc');if(!el)return;
+  const F=myField(),list=myScenarios();
+  const fieldPicker=Object.entries(FIELDS).map(([id,f])=>
+    `<button class="rp-field${profile.field===id?' on':''}" onclick="setField('${id}')">${f.ic} ${f.label}</button>`).join('');
+  el.innerHTML=`
+    <div class="rp-intro">
+      <div class="rp-intro-t">🎬 Scenari immersivi</div>
+      <div class="rp-intro-d">Simulazioni realistiche del tuo settore. Io interpreto un ruolo, tu rispondi solo in inglese. Correggo ogni errore e non mollo.</div>
+    </div>
+    <div class="wc-sec">Il tuo settore</div>
+    <div class="rp-fields">${fieldPicker}</div>
+    <div class="wc-sec">Scenari · ${F.ic} ${F.label}</div>
+    ${list.map((s,i)=>`
+      <div class="rp-card" onclick="startRoleplay(${i})">
+        <div class="rp-card-t">${s.t}</div>
+        <div class="rp-card-s">${s.set}</div>
+        <div class="rp-card-r">🎭 Luna interpreta: <strong>${s.role}</strong> · ${s.turns.length} battute</div>
+        <button class="rp-go">Inizia scenario →</button>
+      </div>`).join('')}
+    ${profile.goal?`<div class="rp-goal">🎯 Obiettivo: <em>${profile.goal}</em></div>`:''}
+  `;
+}
+function setField(id){
+  profile.field=id;saveProfile();
+  buildRoleplay();
+  setBubble(`${FIELDS[id].ic} ${FIELDS[id].label}`);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+syncLevelBtns();
+buildVocab();buildPhrases();buildGrammar();buildPhrasal();buildQuiz();updateScore();buildRoleplay();updateXP();
+buildWelcome();
+</script>
+</body>
+</html>
